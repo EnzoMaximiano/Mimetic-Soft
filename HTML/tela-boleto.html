@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MIMETIC SOFT - Boleto</title>
+    <link rel="stylesheet" href="../CSS/tela-boleto.css">
+    <link rel="stylesheet" href="../CSS/cabecalho-padrao.css">
+    <link rel="stylesheet" href="../CSS/botoes-padrao.css">
+    <link rel="stylesheet" href="../CSS/responsividade-global.css">
+    <!--TELA CRIADA POR: MATHEUS LINO-->
+</head>
+<body class="pagina-boleto">
+<header class="cabecalho">
+    <img src="../assets/logo.png" alt="Logo MIMETIC SOFT" class="logo">
+    <h1>MIMETIC SOFT</h1>
+    <button type="button" class="menu-funcionario">
+        <span>Nome Funcionário</span><span class="seta">⌄</span>
+    </button>
+</header>
+
+<main class="conteudo">
+    <section class="area-boleto">
+        <h2 class="titulo-tipo-boleto">BOLETO</h2>
+        <div class="boleto-container">
+        <div class="mensagem-sucesso">SEU BOLETO FOI GERADO COM SUCESSO!</div>
+        <p class="email-boleto">Enviamos o boleto para: <strong id="email-boleto">E-mail do cliente</strong></p>
+
+        <div class="cards-informacao">
+            <div class="card-info">
+                <span>VALOR PARA PAGAMENTO</span>
+                <strong id="valor-boleto">R$ 110,00</strong>
+            </div>
+            <div class="card-info">
+                <span>VENCIMENTO</span>
+                <strong>15/09/2026</strong>
+            </div>
+        </div>
+
+        <p class="aviso-email">Você receberá o boleto em PDF no seu e-mail.</p>
+
+        <div class="area-codigo">
+            <label for="codigo-boleto">CASO PREFIRA, CÓDIGO PARA PAGAMENTO</label>
+            <div class="codigo-linha">
+                <input id="codigo-boleto" type="text"
+                       value=""
+                       readonly aria-label="Código para pagamento do boleto" autocomplete="off">
+                <button type="button" id="botao-copiar" class="botao-copiar" aria-label="Copiar código do boleto" title="Copiar código">📋 <span>COPIAR</span></button>
+            </div>
+            <span class="copiado" id="mensagem-copiado" role="status" aria-live="polite">Código copiado!</span>
+            <small class="codigo-demonstrativo">Código demonstrativo do protótipo. O boleto real será gerado pela integração bancária.</small>
+        </div>
+
+        <p class="compensacao"><span aria-hidden="true">⌛</span> A compensação pode levar até 5 dias úteis</p>
+
+        <div class="acoes">
+            <button type="button" class="botao-confirmar" id="botao-confirmar">CONFIRMAR</button>
+            <button type="button" class="botao-voltar" id="botao-voltar">VOLTAR</button>
+        </div>
+        </div>
+    </section>
+</main>
+
+<script src="../JAVASCRIPT/api-client.js"></script>
+<script src="../JAVASCRIPT/tela-comum.js"></script>
+<script src="../JAVASCRIPT/tela-boleto.js"></script>
+<script src="../JAVASCRIPT/app-core.js"></script>
+</body>
+</html>

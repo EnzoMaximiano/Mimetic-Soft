@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MIMETIC SOFT - Cartão</title>
+    <link rel="stylesheet" href="../CSS/tela-cartao.css">
+    <link rel="stylesheet" href="../CSS/cabecalho-padrao.css">
+    <link rel="stylesheet" href="../CSS/botoes-padrao.css">
+    <link rel="stylesheet" href="../CSS/senha-visivel.css">
+    <link rel="stylesheet" href="../CSS/responsividade-global.css">
+    <!--TELA CRIADA POR: MATHEUS LINO-->
+</head>
+<body class="pagina-cartao">
+<header class="cabecalho">
+    <img src="../assets/logo.png" alt="Logo MIMETIC SOFT" class="logo">
+    <h1>MIMETIC SOFT</h1>
+    <button type="button" class="menu-funcionario">
+        <span>Nome Funcionário</span><span class="seta">⌄</span>
+    </button>
+</header>
+
+<main class="conteudo">
+    <section class="card-cartao">
+        <form id="form-cartao" novalidate autocomplete="off">
+            <h2 id="titulo-tipo-cartao" class="titulo-tipo-cartao">CRÉDITO</h2>
+            <div class="campo">
+                <label for="numero-cartao">Número do cartão <span class="asterisco">*</span><span class="mensagem-obrigatorio">Campo obrigatório</span></label>
+                <input type="text" id="numero-cartao" inputmode="numeric" maxlength="19" required autocomplete="off">
+            </div>
+
+            <div class="campo">
+                <label for="nome-cartao">Nome no cartão <span class="asterisco">*</span><span class="mensagem-obrigatorio">Campo obrigatório</span></label>
+                <input type="text" id="nome-cartao" autocomplete="cc-name" required>
+            </div>
+
+            <div class="linha-dupla">
+                <div class="campo">
+                    <label for="validade">Validade <span class="asterisco">*</span><span class="mensagem-obrigatorio">Campo obrigatório</span></label>
+                    <input type="text" id="validade" inputmode="numeric" maxlength="5" placeholder="MM/AA" required autocomplete="off">
+                </div>
+                <div class="campo">
+                    <label for="cvv">CVV <span class="asterisco">*</span><span class="mensagem-obrigatorio">Campo obrigatório</span></label>
+                    <input type="password" id="cvv" inputmode="numeric" maxlength="4" required autocomplete="new-password">
+                </div>
+            </div>
+
+            <div class="campo">
+                <label for="parcelamento">Parcelamento <span class="asterisco">*</span><span class="mensagem-obrigatorio">Campo obrigatório</span></label>
+                <select id="parcelamento" required>
+                    <option value=""></option>
+                    <option value="1" id="parcela-1">1x de R$ 110,00</option>
+                    <option value="2">2x de R$ 55,00</option>
+                    <option value="3">3x de R$ 36,67</option>
+                </select>
+            </div>
+
+            <p class="total" id="total-cartao">TOTAL A SER PAGO: R$ 110,00</p>
+
+            <div class="acoes">
+                <button type="submit" class="botao-confirmar">CONFIRMAR</button>
+                <button type="button" class="botao-voltar" id="botao-voltar">VOLTAR</button>
+            </div>
+        </form>
+    </section>
+</main>
+<script src="../JAVASCRIPT/api-client.js"></script>
+<script src="../JAVASCRIPT/tela-comum.js"></script>
+<script src="../JAVASCRIPT/tela-cartao.js"></script>
+<script src="../JAVASCRIPT/senha-visivel.js"></script>
+<script src="../JAVASCRIPT/app-core.js"></script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MIMETIC SOFT - Cadastro de Funcionário</title>
+    <link rel="stylesheet" href="../CSS/tela-cadastro-funcionario.css">
+    <link rel="stylesheet" href="../CSS/cabecalho-padrao.css">
+    <link rel="stylesheet" href="../CSS/botoes-padrao.css">
+    <link rel="stylesheet" href="../CSS/senha-visivel.css">
+    <link rel="stylesheet" href="../CSS/responsividade-global.css">
+    <!--TELA CRIADA POR: MATHEUS LINO-->
+</head>
+<body class="pagina-cadastro-funcionario">
+
+    <!-- Cabeçalho padrão do sistema -->
+    <header class="cabecalho">
+        <img src="../assets/logo.png" alt="Logo MIMETIC SOFT" class="logo">
+
+        <h1>MIMETIC SOFT</h1>
+
+        <button type="button" class="menu-funcionario" id="menu-funcionario">
+            <span>Nome Funcionário</span>
+            <span class="seta">⌄</span>
+        </button>
+    </header>
+
+    <main class="conteudo-principal">
+        <h2>CADASTRO DE FUNCIONÁRIO</h2>
+
+        <!-- Formulário de cadastro -->
+        <section class="card-cadastro">
+            <form id="form-cadastro-funcionario" autocomplete="off">
+                <div class="campo">
+                    <label for="nome">Nome:<span class="asterisco-obrigatorio" aria-hidden="true">*</span></label>
+                    <input type="text" id="nome" name="nome" required autocomplete="off">
+                </div>
+
+                <div class="campo">
+                    <label for="email">E-mail:<span class="asterisco-obrigatorio" aria-hidden="true">*</span></label>
+                    <input type="email" id="email" name="email" required autocomplete="off">
+                </div>
+
+                <div class="campo">
+                    <label for="senha">Senha:<span class="asterisco-obrigatorio" aria-hidden="true">*</span></label>
+                    <input type="password" id="senha" name="senha" required autocomplete="new-password">
+                </div>
+
+                <div class="campo">
+                    <label for="repetir-senha">Repetir senha:<span class="asterisco-obrigatorio" aria-hidden="true">*</span></label>
+                    <input type="password" id="repetir-senha" name="repetir-senha" required autocomplete="new-password">
+                </div>
+
+                <div class="requisitos-senha" aria-live="polite">
+                    <strong>SUA SENHA DEVE CONTER:</strong>
+                    <span id="req-tamanho" class="invalido">✕ 8 caracteres ou mais</span>
+                    <span id="req-maiuscula" class="invalido">✕ 1 letra maiúscula</span>
+                    <span id="req-minuscula" class="invalido">✕ 1 letra minúscula</span>
+                    <span id="req-numero" class="invalido">✕ 1 número</span>
+                    <span id="req-simbolo" class="invalido">✕ 1 símbolo (ex.: @, #, !, $)</span>
+                </div>
+
+                <div class="acoes">
+                    <button type="submit" class="botao-confirmar">CONFIRMAR</button>
+                    <button type="button" class="botao-voltar" id="botao-voltar">VOLTAR</button>
+                </div>
+            </form>
+        </section>
+    </main>
+
+    <script src="../JAVASCRIPT/api-client.js"></script>
+    <script src="../JAVASCRIPT/tela-comum.js"></script>
+    <script src="../JAVASCRIPT/tela-cadastro-funcionario.js"></script>
+<script src="../JAVASCRIPT/app-core.js"></script>
+    <script src="../JAVASCRIPT/senha-visivel.js"></script>
+</body>
+</html>

@@ -1,0 +1,114 @@
+/* =========================================================
+   CABEÇALHO PADRÃO MIMETIC SOFT
+   Referência visual: tela Painel de Gestão.
+   Este arquivo é carregado depois do CSS de cada tela para
+   garantir o mesmo cabeçalho em todo o sistema.
+   ========================================================= */
+.cabecalho {
+    position: relative;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: calc(100% - 60px);
+    max-width: 1500px;
+    height: 76px;
+    margin: 10px auto 0;
+    padding: 0 28px 0 98px;
+    background: #FF464C;
+    border-radius: 0 0 12px 12px;
+}
+
+.cabecalho .logo {
+    position: absolute;
+    z-index: 2;
+    left: 18px;
+    top: -12px;
+    width: 72px;
+    height: 92px;
+    object-fit: contain;
+}
+
+.cabecalho h1 {
+    margin: 0;
+    color: #FFFFFF;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: clamp(29px, 3vw, 38px);
+    font-weight: 700;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.cabecalho .menu-funcionario {
+    position: relative;
+    display: block;
+    flex: 0 1 auto;
+    margin-left: auto;
+    padding: 10px 12px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: #FFFFFF;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 15px;
+    font-weight: 400;
+    line-height: normal;
+    cursor: pointer;
+    transition: background-color .2s ease;
+    white-space: nowrap;
+}
+
+.cabecalho .menu-funcionario:hover,
+.cabecalho .menu-funcionario:focus-visible {
+    background: rgba(255, 255, 255, 0.16);
+}
+
+.cabecalho .menu-funcionario .seta,
+.cabecalho .menu-funcionario span {
+    line-height: 1;
+}
+
+@media (max-width: 900px) {
+    .cabecalho { width: calc(100% - 28px); }
+}
+
+@media (max-width: 700px) {
+    .cabecalho {
+        width: calc(100% - 16px);
+        height: 60px;
+        margin-top: 8px;
+        padding: 0 7px 0 65px;
+        gap: 5px;
+    }
+
+    .cabecalho .logo {
+        left: 6px;
+        top: -5px;
+        width: 51px;
+        height: 68px;
+    }
+
+    .cabecalho h1 {
+        flex: 1;
+        min-width: 0;
+        font-size: clamp(16px, 5vw, 22px);
+    }
+
+    .cabecalho .menu-funcionario {
+        flex: 0 1 auto;
+        max-width: 42%;
+        overflow: hidden;
+        margin-left: auto;
+        padding: 7px 4px;
+        font-size: clamp(9px, 2.8vw, 12px);
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+}
+
+@media (max-width: 380px) {
+    .cabecalho { padding-left: 55px; }
+    .cabecalho .logo { width: 44px; }
+    .cabecalho h1 { font-size: 14px; }
+    .cabecalho .menu-funcionario { max-width: 40%; font-size: 8px; }
+}

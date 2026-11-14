@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MIMETIC SOFT - Pagamento</title>
+    <link rel="stylesheet" href="../CSS/tela-pagamento.css">
+    <link rel="stylesheet" href="../CSS/cabecalho-padrao.css">
+    <link rel="stylesheet" href="../CSS/botoes-padrao.css">
+    <link rel="stylesheet" href="../CSS/responsividade-global.css">
+    <!--TELA CRIADA POR: MATHEUS LINO-->
+</head>
+<body class="pagina-como-pagar">
+<header class="cabecalho">
+    <img src="../assets/logo.png" alt="Logo MIMETIC SOFT" class="logo">
+    <h1>MIMETIC SOFT</h1>
+    <button type="button" class="menu-funcionario">
+        <span>Nome Funcionário</span><span class="seta">⌄</span>
+    </button>
+</header>
+
+<main class="conteudo-principal">
+    <section class="area-pagamento">
+        <h2>COMO DESEJA PAGAR?</h2>
+        <div class="formas-pagamento">
+            <button type="button" class="forma-pagamento pix" data-pagamento="PIX">PIX</button>
+            <button type="button" class="forma-pagamento debito" data-pagamento="DÉBITO">DÉBITO</button>
+            <button type="button" class="forma-pagamento credito" data-pagamento="CRÉDITO">CRÉDITO</button>
+            <button type="button" class="forma-pagamento boleto" data-pagamento="BOLETO">BOLETO</button>
+        </div>
+        <p class="erro-pagamento" id="erro-pagamento">Selecione uma forma de pagamento.</p>
+    </section>
+
+    <section class="area-resumo">
+        <div class="card-resumo">
+            <h3>RESUMO DO PEDIDO</h3>
+            <div class="linha-resumo">
+                <div><p>Produto/Serviço</p><p>Quantidade</p></div>
+                <div><p id="valor-produto">R$ 0,00</p><p>1</p></div>
+            </div>
+            <hr>
+            <div class="linha-resumo">
+                <div><p>Subtotal</p></div>
+                <div><p id="valor-subtotal">R$ 0,00</p></div>
+            </div>
+            <hr>
+            <div class="total"><strong>TOTAL</strong><strong id="valor-total">R$ 0,00</strong></div>
+        </div>
+        <div class="acoes">
+            <button type="button" class="botao-voltar" id="botao-voltar">VOLTAR</button>
+        </div>
+    </section>
+</main>
+<script src="../JAVASCRIPT/api-client.js"></script>
+<script src="../JAVASCRIPT/tela-pagamento.js"></script>
+<script src="../JAVASCRIPT/app-core.js"></script>
+</body>
+</html>

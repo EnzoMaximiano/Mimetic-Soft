@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Cliente | MIMETIC SOFT</title>
+    <link rel="stylesheet" href="../CSS/tela-cadastro-cliente.css">
+    <link rel="stylesheet" href="../CSS/cabecalho-padrao.css">
+    <link rel="stylesheet" href="../CSS/botoes-padrao.css">
+    <link rel="stylesheet" href="../CSS/senha-visivel.css">
+    <link rel="stylesheet" href="../CSS/responsividade-global.css">
+    <!--TELA CRIADA POR: MATHEUS LINO-->
+</head>
+<body class="pagina-cadastro-cliente">
+    <header class="cabecalho">
+        <img class="logo" src="../assets/logo.png" alt="Logo MIMETIC SOFT">
+        <h1>MIMETIC SOFT</h1>
+        <button class="menu-funcionario" type="button">
+            Nome Funcionário <span aria-hidden="true">⌄</span>
+        </button>
+    </header>
+
+    <main class="conteudo">
+        <section class="cadastro">
+            <h2>CADASTRO DE CLIENTE</h2>
+
+            <form class="formulario" id="form-cadastro-cliente" novalidate autocomplete="off">
+                <div class="grupo-campo">
+                    <label for="nome">Nome: <span class="asterisco">*</span><span class="erro-texto">Campo obrigatório</span></label>
+                    <input id="nome" name="nome" type="text" autocomplete="off" required>
+                </div>
+
+                <div class="grupo-campo">
+                    <label for="cpf">CPF: <span class="asterisco">*</span><span class="erro-texto">Campo obrigatório</span></label>
+                    <input id="cpf" name="cpf" type="text" inputmode="numeric" maxlength="14" required autocomplete="off">
+                </div>
+
+                <div class="grupo-campo">
+                    <label for="data-nascimento">Data Nasc: <span class="asterisco">*</span><span class="erro-texto">Campo obrigatório</span></label>
+                    <input id="data-nascimento" name="dataNascimento" type="text" inputmode="numeric" maxlength="10" placeholder="DD/MM/AAAA" required autocomplete="off">
+                </div>
+
+                <div class="grupo-campo">
+                    <label for="telefone">Tel: <span class="asterisco">*</span><span class="erro-texto">Campo obrigatório</span></label>
+                    <input id="telefone" name="telefone" type="tel" inputmode="numeric" maxlength="15" required autocomplete="off">
+                </div>
+
+                <div class="grupo-campo">
+                    <label for="email">E-mail: <span class="asterisco">*</span><span class="erro-texto">Campo obrigatório</span></label>
+                    <input id="email" name="email" type="email" autocomplete="off" required>
+                </div>
+
+                <div class="grupo-campo">
+                    <label for="senha">Senha: <span class="asterisco">*</span><span class="erro-texto">Campo obrigatório</span></label>
+                    <input id="senha" name="senha" type="password" autocomplete="new-password" required>
+                </div>
+
+                <div class="grupo-campo">
+                    <label for="repetir-senha">Repetir senha: <span class="asterisco">*</span><span class="erro-texto">Campo obrigatório</span></label>
+                    <input id="repetir-senha" name="repetirSenha" type="password" autocomplete="new-password" required>
+                    <span class="erro-senha" id="erro-senha">As senhas não coincidem.</span>
+                </div>
+
+                <div class="requisitos-senha" aria-live="polite">
+                    <strong>SUA SENHA DEVE CONTER:</strong>
+                    <span id="req-tamanho" class="invalido">✕ 8 caracteres ou mais</span>
+                    <span id="req-maiuscula" class="invalido">✕ 1 letra maiúscula</span>
+                    <span id="req-minuscula" class="invalido">✕ 1 letra minúscula</span>
+                    <span id="req-numero" class="invalido">✕ 1 número</span>
+                    <span id="req-simbolo" class="invalido">✕ 1 símbolo (ex.: @, #, !, $)</span>
+                </div>
+
+                <div class="acoes">
+                    <button class="botao-confirmar" type="submit">CONFIRMAR</button>
+                    <button class="botao-voltar" id="botao-voltar" type="button">VOLTAR</button>
+                </div>
+            </form>
+        </section>
+    </main>
+
+    <script src="../JAVASCRIPT/api-client.js"></script>
+    <script src="../JAVASCRIPT/tela-comum.js"></script>
+    <script src="../JAVASCRIPT/tela-cadastro-cliente.js"></script>
+<script src="../JAVASCRIPT/app-core.js"></script>
+    <script src="../JAVASCRIPT/senha-visivel.js"></script>
+</body>
+</html>

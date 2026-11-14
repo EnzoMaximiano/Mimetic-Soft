@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Gestão | MIMETIC SOFT</title>
+    <link rel="stylesheet" href="../CSS/tela-painel-gestao.css">
+    <link rel="stylesheet" href="../CSS/cabecalho-padrao.css">
+    <link rel="stylesheet" href="../CSS/botoes-padrao.css">
+    <link rel="stylesheet" href="../CSS/responsividade-global.css">
+    <!--TELA CRIADA POR: MATHEUS LINO-->
+</head>
+<body>
+    <header class="cabecalho">
+        <img class="logo" src="../assets/logo.png" alt="Logo MIMETIC SOFT">
+        <h1>MIMETIC SOFT</h1>
+        <button class="menu-funcionario" type="button" aria-label="Abrir menu do funcionário">
+            Nome Funcionário <span aria-hidden="true">⌄</span>
+        </button>
+    </header>
+
+    <main class="conteudo">
+        <section class="painel" aria-labelledby="titulo-painel">
+            <h2 id="titulo-painel">PAINEL DE GESTÃO</h2>
+
+            <!--
+              DADOS DINÂMICOS / BACKEND:
+              Os valores deste painel poderão vir da API quando todas as telas
+              e o fluxo do sistema forem integrados ao backend/MySQL.
+            -->
+            <div class="grade-indicadores">
+                <article class="cartao cartao-centralizado">
+                    <h3>Serviços realizados no mês:</h3>
+                    <p class="valor-principal" id="servicos-mes">25</p>
+                    <p class="comparativo" id="comparativo-servicos">5% a mais que mês passado.</p>
+                </article>
+
+                <article class="cartao cartao-centralizado">
+                    <h3>Tempo médio de conclusão:</h3>
+                    <p class="valor-principal valor-tempo" id="tempo-medio">4h e 35min</p>
+                    <p class="comparativo" id="comparativo-tempo">10% a menos que mês passado.</p>
+                </article>
+
+                <article class="cartao">
+                    <h3>Serviços mais solicitados:</h3>
+                    <p class="lista-dados" id="servicos-solicitados">
+                        Manutenção geral<br>
+                        Revisão Elétrica
+                    </p>
+                </article>
+
+                <article class="cartao">
+                    <h3>Previsão de demandas:</h3>
+                    <p class="lista-dados" id="previsao-demandas">
+                        Reparo no freio<br>
+                        Alinhamento
+                    </p>
+                </article>
+            </div>
+
+            <button class="botao-voltar" id="botao-voltar" type="button">VOLTAR</button>
+        </section>
+    </main>
+
+    <script src="../JAVASCRIPT/api-client.js"></script>
+    <script src="../JAVASCRIPT/tela-comum.js"></script>
+    <script src="../JAVASCRIPT/tela-painel-gestao.js"></script>
+<script src="../JAVASCRIPT/app-core.js"></script>
+</body>
+</html>

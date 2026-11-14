@@ -1,0 +1,269 @@
+:root {
+    --cor-vermelho: #ff464c;
+    --cor-vermelho-hover: #e83e44;
+    --cor-fundo: #efefef;
+    --cor-branco: #ffffff;
+    --cor-menu-hover: rgba(255, 255, 255, .16);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+    width: 100%;
+    min-height: 100%;
+    margin: 0;
+}
+
+body {
+    min-height: 100vh;
+    overflow: hidden;
+    background: var(--cor-fundo);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+button { font-family: inherit; }
+
+/* Cabeçalho da nova tela principal, seguindo o Dashboard do Figma. */
+.dashboard-cabecalho {
+    position: relative;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    width: calc(100% - 66px);
+    max-width: 1450px;
+    height: 58px;
+    margin: 22px auto 0;
+    padding: 0 34px 0 52px;
+    background: var(--cor-vermelho);
+    border-radius: 0 0 12px 12px;
+}
+
+.dashboard-cabecalho h1 {
+    margin: 0;
+    color: var(--cor-branco);
+    font-size: clamp(24px, 2.3vw, 34px);
+    line-height: 1;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.menu-funcionario {
+    margin-left: auto;
+    padding: 9px 12px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--cor-branco);
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color .2s ease;
+}
+
+.menu-funcionario:hover,
+.menu-funcionario:focus-visible {
+    background: var(--cor-menu-hover);
+}
+
+.dashboard {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: calc(100% - 66px);
+    max-width: 1450px;
+    min-height: calc(100vh - 80px);
+    margin: 0 auto;
+    padding: 44px 24px 70px;
+}
+
+/* Atalhos principais do sistema, incluindo o acesso ao Painel de Gestão. */
+.grade-dashboard {
+    display: grid;
+    grid-template-columns: repeat(6, 128px);
+    gap: 44px 27px;
+    justify-content: center;
+    align-content: center;
+}
+
+.grade-dashboard .card-atalho {
+    grid-column: span 2;
+}
+
+.grade-dashboard .card-atalho:nth-child(4) {
+    grid-column: 2 / span 2;
+}
+
+.grade-dashboard .card-atalho:nth-child(5) {
+    grid-column: 4 / span 2;
+}
+
+.card-atalho {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 310px;
+    height: 205px;
+    padding: 22px;
+    border: 3px solid var(--cor-vermelho);
+    border-radius: 7px;
+    background: transparent;
+    color: var(--cor-vermelho);
+    font-size: 25px;
+    line-height: 1.12;
+    font-weight: 700;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color .2s ease, color .2s ease, transform .15s ease;
+}
+
+.card-atalho:hover,
+.card-atalho:focus-visible {
+    background: var(--cor-vermelho);
+    color: var(--cor-branco);
+}
+
+.card-atalho:active { transform: scale(.98); }
+
+@media (min-width: 761px) and (max-width: 1050px) {
+    body { overflow-y: auto; }
+
+    .dashboard {
+        min-height: calc(100vh - 80px);
+        padding-top: 34px;
+        padding-bottom: 50px;
+    }
+
+    .grade-dashboard {
+        grid-template-columns: repeat(2, minmax(250px, 310px));
+        gap: 28px 34px;
+        width: 100%;
+        max-width: 654px;
+    }
+
+    .grade-dashboard .card-atalho,
+    .grade-dashboard .card-atalho:nth-child(4) {
+        grid-column: auto;
+    }
+
+    .grade-dashboard .card-atalho:nth-child(5) {
+        grid-column: 1 / -1;
+        justify-self: center;
+    }
+}
+
+@media (max-width: 760px) {
+    body {
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+
+    .dashboard-cabecalho {
+        width: calc(100% - 16px);
+        height: 60px;
+        margin-top: 8px;
+        padding: 0 12px 0 18px;
+    }
+
+    .dashboard-cabecalho h1 {
+        flex: 1;
+        min-width: 0;
+        font-size: clamp(18px, 5.5vw, 25px);
+    }
+
+    .menu-funcionario {
+        flex: 0 1 auto;
+        max-width: 46%;
+        overflow: hidden;
+        padding: 7px 5px;
+        font-size: clamp(9px, 2.8vw, 12px);
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .dashboard {
+        width: 100%;
+        min-height: calc(100vh - 68px);
+        padding: 30px 18px;
+    }
+
+    .grade-dashboard {
+        width: 100%;
+        max-width: 430px;
+        grid-template-columns: 1fr;
+        gap: 18px;
+    }
+
+    .grade-dashboard .card-atalho,
+    .grade-dashboard .card-atalho:nth-child(4),
+    .grade-dashboard .card-atalho:nth-child(5) {
+        grid-column: 1;
+    }
+
+    .card-atalho {
+        width: 100%;
+        height: 130px;
+        font-size: 20px;
+    }
+}
+
+/* Fundo exclusivo da Tela Principal: oficina enviada pelo grupo. */
+body {
+    position: relative;
+    background-image:
+        linear-gradient(rgba(0, 0, 0, .32), rgba(0, 0, 0, .32)),
+        url('../assets/fundo-oficina.png');
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+/* Mantém os atalhos legíveis sem esconder completamente a fotografia. */
+.card-atalho {
+    background: rgba(255, 255, 255, .90);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .16);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+}
+
+.card-atalho:hover,
+.card-atalho:focus-visible {
+    background: var(--cor-vermelho);
+}
+
+@media (max-width: 760px) {
+    body {
+        background-attachment: scroll;
+        background-position: center center;
+    }
+}
+
+/* Destaque dos atalhos no desktop: expande sem empurrar os demais cards. */
+@media (hover: hover) and (pointer: fine) and (min-width: 761px) {
+    .grade-dashboard {
+        /* Folga visual para o card crescer sem encostar nos vizinhos. */
+        gap: 52px 38px;
+    }
+
+    .card-atalho {
+        position: relative;
+        z-index: 1;
+        transform: scale(1);
+        transform-origin: center;
+        transition: transform .24s ease, background-color .2s ease, color .2s ease, box-shadow .24s ease;
+        will-change: transform;
+    }
+
+    .card-atalho:hover,
+    .card-atalho:focus-visible {
+        z-index: 3;
+        transform: scale(1.07);
+        background: var(--cor-vermelho);
+        color: var(--cor-branco);
+        box-shadow: 0 14px 32px rgba(0, 0, 0, .24);
+    }
+
+    .card-atalho:active {
+        transform: scale(1.03);
+    }
+}

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Mimetic</title>
+  <link rel="stylesheet" href="../CSS/tela-login.css">
+  <!--TELA CRIADA POR: VINICIUS SANCHES-->
+</head>
+
+<body>
+
+  <!-- Cabecalho -->
+  <header>
+
+    <div class="logo">
+      <img src="../assets/logo.png" alt="logo">
+    </div>
+
+    <h2 class="Nome">Mimetic Soft</h2>
+
+    <nav class="menuN">
+      <a href="#">Sobre</a>
+      <a href="#">Contato</a>
+      <button type="button" class="btnLogin">Login</button>
+    </nav>
+  </header>
+
+  <!-- caixa formulário de login / cadastro de funcionário -->
+  <div class="wrapper">
+
+    <span class="iconeFechar"><ion-icon name="close-circle-outline"></ion-icon></span>
+
+    <!-- LOGIN DO FUNCIONÁRIO -->
+    <div class="formulario login">
+      <h2>Login</h2>
+
+      <form id="form-login" autocomplete="on">
+
+        <!-- inserir email -->
+        <div class="input-box">
+          <span class="icon"><ion-icon name="mail-outline"></ion-icon></span>
+          <input type="email" required id="email" name="email" autocomplete="username">
+          <label for="email">Email</label>
+        </div>
+
+        <!-- inserir senha -->
+        <div class="input-box">
+          <span class="icon"><ion-icon name="key-outline"></ion-icon></span>
+          <input type="password" required id="senha" name="senha" autocomplete="current-password">
+          <label for="senha">Senha</label>
+        </div>
+
+        <!-- espaço esqueci minha senha e manter conectado -->
+        <div class="esqueciSenha">
+          <label><input type="checkbox" id="manter-conectado">Manter conectado</label>
+          <a href="#" id="link-esqueci-senha">Esqueci minha senha</a>
+        </div>
+
+        <!-- botão de acesso -->
+        <button type="submit" class="btn">Login</button>
+
+        <!-- espaço criar conta -->
+        <div class="login-register">
+          <p>Não tem uma conta? <a href="#" class="register-link">Registre-se</a></p>
+        </div>
+
+      </form>
+    </div>
+
+    <!-- CADASTRO DE FUNCIONÁRIO (não cria cliente) -->
+    <div class="formulario registrar">
+      <h2>Criar conta</h2>
+
+      <form id="form-registro" autocomplete="off">
+
+        <!-- inserir nome usuário -->
+        <div class="input-box">
+          <span class="icon"><ion-icon name="person-outline"></ion-icon></span>
+          <input type="text" required id="registro-nome" name="nome" autocomplete="off">
+          <label for="registro-nome">Nome de Usuário</label>
+        </div>
+
+        <!-- inserir email -->
+        <div class="input-box">
+          <span class="icon"><ion-icon name="mail-outline"></ion-icon></span>
+          <input type="email" placeholder=" " required id="registro-email" name="email" autocomplete="off">
+          <label for="registro-email">Email</label>
+        </div>
+
+        <!-- inserir senha -->
+        <div class="input-box">
+          <span class="icon"><ion-icon name="key-outline"></ion-icon></span>
+          <input type="password" placeholder=" " required id="registro-senha" name="senha" autocomplete="new-password">
+          <label for="registro-senha">Senha</label>
+        </div>
+
+        <!-- concordar termos -->
+        <div class="esqueciSenha">
+          <label><input type="checkbox">Eu concordo com os Termos &amp; Condições</label>
+        </div>
+
+        <!-- botão criar conta -->
+        <button type="submit" class="btn">Registrar-se</button>
+
+        <!-- botão já tem uma conta -->
+        <div class="login-register">
+          <p>Já tem uma conta? <a href="#" class="login-link">Login</a></p>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <!-- cliente da API + sessão (deve vir antes dos scripts que o usam) -->
+  <script src="../JAVASCRIPT/api-client.js"></script>
+  <script src="../JAVASCRIPT/tela-login.js"></script>
+  <script src="../JAVASCRIPT/app-core.js"></script>
+
+  <!-- ícones importados -->
+  <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
+</body>
+
+</html>

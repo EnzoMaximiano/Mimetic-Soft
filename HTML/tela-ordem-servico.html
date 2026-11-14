@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MIMETIC SOFT - Ordem de Serviço</title>
+    <link rel="stylesheet" href="../CSS/tela-ordem-servico.css">
+    <link rel="stylesheet" href="../CSS/cabecalho-padrao.css">
+    <link rel="stylesheet" href="../CSS/botoes-padrao.css">
+    <link rel="stylesheet" href="../CSS/responsividade-global.css">
+    <!--TELA CRIADA POR: MATHEUS LINO-->
+</head>
+<body class="pagina-ordem-servico">
+<header class="cabecalho">
+    <img src="../assets/logo.png" alt="Logo MIMETIC SOFT" class="logo">
+    <h1>MIMETIC SOFT</h1>
+    <button type="button" class="menu-funcionario">
+        <span>Nome Funcionário</span><span class="seta">⌄</span>
+    </button>
+</header>
+
+<main class="conteudo">
+    <h2>ORDEM DE SERVIÇO</h2>
+
+    <div class="grade">
+        <section class="card-formulario">
+            <form id="form-ordem-servico" novalidate autocomplete="off">
+                <div class="campo">
+                    <label for="cpf">CPF Cliente: <span class="asterisco-obrigatorio">*</span><span class="mensagem-obrigatorio">Campo obrigatório</span></label>
+                    <input id="cpf" name="cpf" type="text" placeholder="000.000.000-00" maxlength="14" required autocomplete="off">
+                </div>
+
+                <div class="campo">
+                    <label for="nome">Nome completo cliente:</label>
+                    <input id="nome" name="nome" type="text" placeholder="Insira o nome completo do cliente" autocomplete="off">
+                </div>
+
+                <div class="campo">
+                    <label for="telefone">Telefone cliente:</label>
+                    <input id="telefone" name="telefone" type="text" placeholder="(00) 0000-0000" autocomplete="off">
+                </div>
+
+                <div class="campo">
+                    <label for="email">Email cliente:</label>
+                    <input id="email" name="email" type="email" placeholder="exemplo@exemplo.com" autocomplete="off">
+                </div>
+
+                <div class="campo">
+                    <label for="placa">Placa do veículo:</label>
+                    <input id="placa" name="placa" type="text" placeholder="ABC1D23" maxlength="8" autocomplete="off">
+                </div>
+
+                <div class="campo">
+                    <label for="modelo">Modelo do veículo:</label>
+                    <input id="modelo" name="modelo" type="text" placeholder="Digite o modelo do veículo" autocomplete="off">
+                </div>
+
+                <div class="campo">
+                    <label for="solicitacao">Nº Chassi:</label>
+                    <input id="solicitacao" name="solicitacao" type="text" placeholder="Digite o nº do chassi" autocomplete="off">
+                </div>
+
+                <div class="campo">
+                    <label for="ano-carro">Ano do veículo:</label>
+                    <input id="ano-carro" name="ano-carro" type="text" maxlength="10" placeholder="Ex.: 2024 ou 2024/2025" autocomplete="off">
+                </div>
+
+                <div class="campo campo-servicos">
+                    <label>Serviços solicitados:</label>
+                    <div id="lista-servicos" class="lista-servicos">
+                        <div class="linha-servico">
+                            <select class="servico-nome" aria-label="Serviço solicitado">
+                                <option value="">Escolher serviço</option>
+                                <option>Troca de óleo</option><option>Alinhamento</option><option>Balanceamento</option>
+                                <option>Troca de filtros</option><option>Freios</option><option>Suspensão</option>
+                                <option>Revisão geral</option><option>Diagnóstico</option><option value="Outro serviço">Outro serviço</option>
+                            </select>
+                            <input class="servico-outro" type="text" placeholder="Especifique o serviço" aria-label="Especifique o outro serviço" autocomplete="off" hidden>
+                            <div class="servico-preco"><span>R$</span><input class="servico-valor" type="text" inputmode="decimal" placeholder="0,00" aria-label="Preço do serviço" autocomplete="off"></div>
+                            <button type="button" class="remover-servico" aria-label="Remover serviço" title="Remover serviço">×</button>
+                        </div>
+                    </div>
+                    <button type="button" id="adicionar-servico" class="adicionar-servico">+ ADICIONAR SERVIÇO</button>
+                </div>
+            </form>
+        </section>
+
+        <section class="lado-direito">
+            <div class="card-info previsao">
+                <h3>PREVISÃO DE CONCLUSÃO: <span class="asterisco-obrigatorio">*</span></h3>
+                <div class="data-com-limpar"><input id="previsao-conclusao" name="previsao-conclusao" form="form-ordem-servico" type="date" aria-label="Previsão de conclusão" autocomplete="off"><button type="button" id="limpar-previsao" title="Limpar data" aria-label="Limpar previsão de conclusão">×</button></div>
+            </div>
+
+            <div class="card-info orcamento">
+                <h3>ORÇAMENTO: <span class="asterisco-obrigatorio">*</span></h3>
+                <div class="campo-orcamento"><span>R$</span><input id="orcamento" name="orcamento" form="form-ordem-servico" type="text" inputmode="decimal" placeholder="0,00" readonly aria-label="Valor total do orçamento" autocomplete="off"></div>
+            </div>
+
+            <button type="button" id="gerar-pdf" class="botao-pdf">GERAR PDF PARA O CLIENTE</button>
+
+            <div class="acoes">
+                <button type="button" id="voltar" class="botao-voltar">VOLTAR</button>
+                <button type="submit" form="form-ordem-servico" class="botao-confirmar">CONFIRMAR</button>
+            </div>
+        </section>
+    </div>
+</main>
+<script src="../JAVASCRIPT/api-client.js"></script>
+<script src="../JAVASCRIPT/tela-comum.js"></script>
+<script src="../JAVASCRIPT/pdf-ordem-servico.js"></script>
+<script src="../JAVASCRIPT/tela-ordem-servico.js"></script>
+<script src="../JAVASCRIPT/app-core.js"></script>
+</body>
+</html>

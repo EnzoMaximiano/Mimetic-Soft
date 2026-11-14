@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Acompanhamento do Veículo | MIMETIC SOFT</title>
+  <link rel="stylesheet" href="../CSS/tela-acompanhamento.css">
+    <link rel="stylesheet" href="../CSS/cabecalho-padrao.css">
+    <link rel="stylesheet" href="../CSS/botoes-padrao.css">
+    <link rel="stylesheet" href="../CSS/responsividade-global.css">
+    <!--TELA CRIADA POR: MATHEUS LINO-->
+</head>
+<body>
+<header class="cabecalho">
+  <img src="../assets/logo.png" alt="Logo MIMETIC SOFT" class="logo">
+  <h1>MIMETIC SOFT</h1>
+  <button class="menu-funcionario" type="button">Nome Funcionário <span>⌄</span></button>
+</header>
+
+<main class="conteudo">
+  <section class="acompanhamento">
+    <h2>Seu veículo já está sendo preparado para o serviço.<br>Acompanhe o andamento abaixo.</h2>
+
+    <!-- STATUS DO SERVIÇO: futuramente o backend poderá informar qual etapa está ativa. -->
+    <div class="progresso" id="progresso" data-etapa="1">
+      <div class="linha"></div>
+      <!-- O carrinho marca visualmente a etapa atual do serviço. -->
+      <span class="carrinho" id="carrinho" aria-label="Veículo na etapa atual">
+        <svg class="icone-carro-direita" viewBox="0 0 64 32" aria-hidden="true">
+          <path d="M7 20h3l4-9c1-2 3-3 5-3h22c3 0 5 1 7 4l5 8h3c2 0 3 1 3 3v3H5v-3c0-2 1-3 2-3z" fill="currentColor"/>
+          <path d="M19 11h20c2 0 3 1 4 2l4 7H15l3-7c0-1 1-2 1-2z" fill="#f0f0f0"/>
+          <circle cx="17" cy="26" r="5" fill="#333"/>
+          <circle cx="48" cy="26" r="5" fill="#333"/>
+          <circle cx="17" cy="26" r="2" fill="#aaa"/>
+          <circle cx="48" cy="26" r="2" fill="#aaa"/>
+          <path d="M58 19l5 3-5 3z" fill="#ff464c"/>
+        </svg>
+      </span>
+      <div class="etapas">
+        <div class="etapa"><span class="ponto"></span><span class="haste"></span><p>AGUARDANDO<br>CONF.PAGAMENTO</p></div>
+        <div class="etapa"><span class="ponto"></span><span class="haste"></span><p>VEÍCULO EM<br>DIAGNÓSTICO</p></div>
+        <div class="etapa"><span class="ponto"></span><span class="haste"></span><p>VEÍCULO EM<br>MANUTENÇÃO</p></div>
+        <div class="etapa"><span class="ponto"></span><span class="haste"></span><p>MANUTENÇÃO<br>CONCLUÍDA</p></div>
+      </div>
+      <span class="bandeira" aria-label="Conclusão">🏁</span>
+    </div>
+
+    <p class="mensagem">Seu veículo está sendo atendido pela nossa equipe.<br>Você receberá uma atualização quando houver novidades.</p>
+    <button id="botao-voltar" class="botao-voltar" type="button">VOLTAR</button>
+  </section>
+</main>
+<script src="../JAVASCRIPT/api-client.js"></script>
+<script src="../JAVASCRIPT/tela-comum.js"></script>
+<script src="../JAVASCRIPT/tela-acompanhamento.js"></script>
+<script src="../JAVASCRIPT/app-core.js"></script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Serviços em Andamento | MIMETIC SOFT</title>
+    <link rel="stylesheet" href="../CSS/tela-servicos-andamento.css">
+    <link rel="stylesheet" href="../CSS/cabecalho-padrao.css">
+    <link rel="stylesheet" href="../CSS/botoes-padrao.css">
+    <link rel="stylesheet" href="../CSS/responsividade-global.css">
+    <!--TELA CRIADA POR: MATHEUS LINO-->
+</head>
+<body>
+    <header class="cabecalho">
+        <img class="logo" src="../assets/logo.png" alt="Logo MIMETIC SOFT">
+        <h1>MIMETIC SOFT</h1>
+
+        <button class="menu-funcionario" type="button" aria-label="Abrir menu do funcionário">
+            Nome Funcionário <span aria-hidden="true">⌄</span>
+        </button>
+    </header>
+
+    <main class="conteudo">
+        <section class="servicos" aria-labelledby="titulo-servicos">
+            <h2 id="titulo-servicos">ORDENS DE SERVIÇO:</h2>
+
+            <!--
+              DADOS DINÂMICOS / BACKEND:
+              Futuramente as ordens de serviço poderão ser carregadas pela API.
+              O backend fará a consulta no MySQL e enviará os dados para o front-end.
+            -->
+            <div class="tabela-servicos" id="tabela-servicos">
+                <div class="cabecalho-coluna coluna-cliente">Cliente:</div>
+                <div class="cabecalho-coluna coluna-placa">Placa:</div>
+                <div class="cabecalho-coluna coluna-solicitacao">Solicitação:</div>
+                <div class="cabecalho-coluna coluna-status">Status:</div>
+                <div class="cabecalho-coluna coluna-conclusao">CONCLUSÃO:</div>
+
+                <div class="lista-ordens" id="lista-ordens">
+                    <!-- As ordens serão inseridas aqui pelo JavaScript/backend. -->
+                </div>
+            </div>
+            <button class="botao-voltar" id="botao-voltar" type="button">VOLTAR</button>
+        </section>
+    </main>
+
+    <script src="../JAVASCRIPT/api-client.js"></script>
+    <script src="../JAVASCRIPT/tela-comum.js"></script>
+    <script src="../JAVASCRIPT/pdf-ordem-servico.js"></script>
+    <script src="../JAVASCRIPT/tela-servicos-andamento.js"></script>
+    <script src="../JAVASCRIPT/app-core.js"></script>
+</body>
+</html>

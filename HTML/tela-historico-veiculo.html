@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Histórico do Veículo | MIMETIC SOFT</title>
+    <link rel="stylesheet" href="../CSS/tela-historico-veiculo.css">
+    <link rel="stylesheet" href="../CSS/cabecalho-padrao.css">
+    <link rel="stylesheet" href="../CSS/botoes-padrao.css">
+    <link rel="stylesheet" href="../CSS/responsividade-global.css">
+    <!--TELA CRIADA POR: MATHEUS LINO-->
+</head>
+<body>
+<header class="cabecalho">
+    <img class="logo" src="../assets/logo.png" alt="Logo MIMETIC SOFT">
+    <h1>MIMETIC SOFT</h1>
+    <button class="menu-funcionario" type="button">Nome Funcionário <span>⌄</span></button>
+</header>
+
+<main class="conteudo">
+    <section class="historico">
+        <h2>HISTÓRICO DO VEÍCULO</h2>
+
+        <div class="grade">
+            <section class="area-cliente">
+                <h3>CONSULTAR VEÍCULO:</h3>
+
+                <form id="form-historico" class="cartao-cliente" novalidate autocomplete="off">
+
+                    <div class="grupo-campo">
+                        <label for="placa">Placa: <span class="asterisco">*</span><span class="erro-texto">Campo obrigatório</span></label>
+                        <input id="placa" type="text" required placeholder="Digite a placa" maxlength="8" autocomplete="off">
+                    </div>
+                </form>
+            </section>
+
+            <section class="area-servicos">
+                <div class="cartao-servicos">
+                    <h3>SERVIÇOS REALIZADOS</h3>
+                    <!--
+                      DADOS DINÂMICOS / BACKEND:
+                      Na integração final, o histórico real poderá ser carregado
+                      pela API conforme o cliente/veículo/placa selecionado.
+                    -->
+                    <div id="lista-servicos" class="lista-servicos"></div>
+                </div>
+
+                <div class="acoes">
+                    <button class="botao-voltar" id="botao-voltar" type="button">VOLTAR</button>
+                    <button class="botao-confirmar" id="botao-confirmar" type="button">CONFIRMAR</button>
+                </div>
+            </section>
+        </div>
+    </section>
+</main>
+
+<script src="../JAVASCRIPT/api-client.js"></script>
+<script src="../JAVASCRIPT/tela-comum.js"></script>
+<script src="../JAVASCRIPT/tela-historico-veiculo.js"></script>
+<script src="../JAVASCRIPT/app-core.js"></script>
+</body>
+</html>

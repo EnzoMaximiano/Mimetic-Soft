@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | MIMETIC SOFT</title>
+    <link rel="stylesheet" href="../CSS/tela-principal.css">
+    <link rel="stylesheet" href="../CSS/cabecalho-padrao.css">
+    <link rel="stylesheet" href="../CSS/responsividade-global.css">
+    <!--TELA CRIADA POR: MATHEUS LINO-->
+</head>
+<body>
+<header class="cabecalho dashboard-cabecalho">
+    <img src="../assets/logo.png" alt="Logo MIMETIC SOFT" class="logo">
+    <h1>MIMETIC SOFT</h1>
+    <button class="menu-funcionario" type="button">
+        Nome Funcionário <span aria-hidden="true">⌄</span>
+    </button>
+</header>
+
+<main class="dashboard" aria-label="Menu principal do funcionário">
+    <section class="grade-dashboard">
+        
+        <a href="tela-ordem-servico.html" class="card-atalho" data-destino="ordens"
+        id="abrir ordem de serviço">ABRIR ORDEM<br>DE SERVIÇO</a>
+
+        <a href="tela-servicos-andamento.html" class="card-atalho" data-destino="andamento"
+        id="ordens de serviço em andamento">ORDENS DE<br>SERVIÇOS EM<br>ANDAMENTO</a>
+        
+        <a href="tela-cadastro-cliente.html" class="card-atalho" data-destino="cliente"
+        id="cadastro cliente">CADASTRAR<br>CLIENTE<br></a>
+
+        <a href="tela-historico-veiculo.html" class="card-atalho" data-destino="historico"
+        id="cadastro cliente">BUSCAR<br>HISTORICO<br>DO<br>VEÍCULO</a>
+
+        <a href="tela-painel-gestao.html" class="card-atalho" data-destino="gestao"
+        id="cadastro cliente">PAINEL<br>DE<br>GESTÃO<br></a>
+
+    </section>
+</main>
+
+<script src="../JAVASCRIPT/tela-principal.js"></script>
+<script src="../JAVASCRIPT/api-client.js"></script>
+<script src="../JAVASCRIPT/app-core.js"></script>
+</body>
+</html>

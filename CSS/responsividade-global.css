@@ -1,0 +1,304 @@
+/* =========================================================
+   RESPONSIVIDADE GLOBAL - MIMETIC SOFT
+   Complementa cada tela sem alterar o layout aprovado no desktop.
+   ========================================================= */
+html { -webkit-text-size-adjust: 100%; }
+img, svg, canvas { max-width: 100%; }
+input, select, textarea, button { font: inherit; }
+input, select, textarea { max-width: 100%; }
+
+/* Monitores grandes: impede que o conteúdo fique excessivamente espalhado. */
+@media (min-width: 1600px) {
+  .cabecalho, .dashboard-cabecalho { max-width: 1500px; }
+}
+
+/* Tablet e celular: cabeçalho legível, sem sobreposição. */
+@media (max-width: 700px) {
+  html, body { width: 100%; max-width: 100%; overflow-x: hidden !important; }
+  body { min-width: 0; }
+  .cabecalho, .dashboard-cabecalho {
+    width: calc(100% - 16px) !important;
+    max-width: none !important;
+    margin-left: 8px !important;
+    margin-right: 8px !important;
+  }
+  .cabecalho h1, .dashboard-cabecalho h1 {
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .menu-funcionario {
+    min-width: 0;
+    max-width: 43%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .conteudo, .conteudo-principal, .dashboard {
+    max-width: 100%;
+  }
+  input, select, textarea { font-size: 16px; } /* evita zoom automático em celulares */
+  button, a { touch-action: manipulation; }
+}
+
+/* Celulares estreitos. */
+@media (max-width: 480px) {
+  .conteudo, .conteudo-principal { padding-left: 12px !important; padding-right: 12px !important; }
+  .card-login, .card-cadastro, .card-recuperacao, .card-nova-senha,
+  .card-cartao, .card-pix, .card-resumo, .card-formulario {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+  .acoes, .botoes, .area-botoes, .acoes-integradas {
+    max-width: 100%;
+    flex-wrap: wrap;
+  }
+}
+
+/* Telas muito pequenas (ex.: 320px): prioriza leitura e toque. */
+@media (max-width: 360px) {
+  .cabecalho, .dashboard-cabecalho { width: calc(100% - 8px) !important; margin-left: 4px !important; margin-right: 4px !important; }
+  .cabecalho h1, .dashboard-cabecalho h1 { font-size: 14px !important; }
+  .menu-funcionario { max-width: 45%; font-size: 9px !important; padding-left: 3px !important; padding-right: 3px !important; }
+  .botao-voltar, .botao-confirmar, .botao-entrar { max-width: 100%; }
+}
+
+/* Celular deitado: reduz alturas rígidas para aproveitar a área útil. */
+@media (max-height: 520px) and (orientation: landscape) and (max-width: 950px) {
+  html, body { overflow-y: auto !important; }
+  .conteudo, .conteudo-principal, .dashboard { min-height: auto !important; padding-top: 16px !important; padding-bottom: 20px !important; }
+}
+
+/* Padronização solicitada: rótulos de campos seguem o Cadastro de Funcionário. */
+.campo > label,.grupo-campo > label{font-size:21px!important;line-height:1.15}
+@media(max-width:600px){.campo > label,.grupo-campo > label{font-size:18px!important}}
+
+
+/* =========================================================
+   AJUSTES ESPECÍFICOS APROVADOS — 28/09/2026
+   Referência de tamanho: botões principais da tela Boleto.
+   Não altera PIX / DÉBITO / CRÉDITO / BOLETO (.forma-pagamento).
+   ========================================================= */
+@media (min-width: 421px) {
+  body.pagina-nova-senha .card-nova-senha .botao-confirmar,
+  body.pagina-nova-senha .card-nova-senha .botao-voltar,
+  body.pagina-pix .acoes-integradas .botao-confirmar-integrado,
+  body.pagina-pix .acoes-integradas .botao-voltar,
+  body.pagina-cartao .acoes .botao-confirmar,
+  body.pagina-cartao .acoes .botao-voltar,
+  body.pagina-cadastro-funcionario .acoes .botao-confirmar,
+  body.pagina-cadastro-funcionario .acoes .botao-voltar {
+    box-sizing: border-box !important;
+    width: 180px !important;
+    min-width: 180px !important;
+    max-width: 180px !important;
+    height: 48px !important;
+    min-height: 48px !important;
+    max-height: 48px !important;
+    padding: 0 18px !important;
+    border-radius: 7px !important;
+    font-size: 18px !important;
+    font-weight: 700 !important;
+    line-height: 1.1 !important;
+    flex: 0 0 180px !important;
+  }
+}
+
+/* Ordem de Serviço: GERAR PDF tem exatamente a mesma caixa do + ADICIONAR SERVIÇO. */
+body.pagina-ordem-servico .adicionar-servico,
+body.pagina-ordem-servico .botao-pdf {
+  box-sizing: border-box !important;
+  width: 180px !important;
+  min-width: 180px !important;
+  max-width: 180px !important;
+  height: 38px !important;
+  min-height: 38px !important;
+  max-height: 38px !important;
+  padding: 0 12px !important;
+  margin-top: 6px !important;
+  font-size: 13px !important;
+  line-height: 1.1 !important;
+  flex: 0 0 180px !important;
+}
+
+/* COMO DESEJA PAGAR: página fixa no desktop/notebook, sem barra vertical.
+   Os quatro botões de forma de pagamento permanecem intocados. */
+@media (min-width: 821px) and (min-height: 620px) {
+  html:has(body.pagina-como-pagar),
+  body.pagina-como-pagar {
+    height: 100% !important;
+    min-height: 100% !important;
+    overflow-y: hidden !important;
+  }
+  body.pagina-como-pagar .conteudo-principal {
+    margin-top: 18px !important;
+  }
+}
+
+/* Em telas estreitas, mantém os botões acessíveis sem corte horizontal. */
+@media (max-width: 420px) {
+  body.pagina-nova-senha .card-nova-senha .botao-confirmar,
+  body.pagina-nova-senha .card-nova-senha .botao-voltar,
+  body.pagina-pix .acoes-integradas .botao-confirmar-integrado,
+  body.pagina-pix .acoes-integradas .botao-voltar,
+  body.pagina-cartao .acoes .botao-confirmar,
+  body.pagina-cartao .acoes .botao-voltar,
+  body.pagina-cadastro-funcionario .acoes .botao-confirmar,
+  body.pagina-cadastro-funcionario .acoes .botao-voltar {
+    width: min(180px, 100%) !important;
+    min-width: 0 !important;
+    max-width: 180px !important;
+    height: 48px !important;
+    min-height: 48px !important;
+    max-height: 48px !important;
+    flex: 0 1 180px !important;
+  }
+  body.pagina-ordem-servico .adicionar-servico,
+  body.pagina-ordem-servico .botao-pdf {
+    width: min(180px, 100%) !important;
+    min-width: 0 !important;
+    max-width: 180px !important;
+  }
+}
+
+/* =========================================================
+   ORDEM DE SERVIÇO — composição em "pirâmide" dos botões
+   PDF centralizado acima; VOLTAR e CONFIRMAR lado a lado.
+   ========================================================= */
+body.pagina-ordem-servico .botao-pdf {
+  width: 280px !important;
+  min-width: 280px !important;
+  max-width: 280px !important;
+  height: 38px !important;
+  min-height: 38px !important;
+  max-height: 38px !important;
+  flex: 0 0 280px !important;
+  display: block !important;
+  margin: 6px auto 0 !important;
+  white-space: nowrap !important;
+}
+
+body.pagina-ordem-servico .acoes {
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 12px !important;
+}
+
+@media (max-width: 420px) {
+  body.pagina-ordem-servico .botao-pdf {
+    width: min(280px, 100%) !important;
+    min-width: 0 !important;
+    max-width: 280px !important;
+    flex: 0 1 280px !important;
+  }
+}
+
+/* =========================================================
+   ORDEM DE SERVIÇO — refinamento visual solicitado
+   Mantém a ordem e o design atuais: apenas amplia o botão PDF
+   e cria mais respiro entre cabeçalho, título e formulário.
+   ========================================================= */
+body.pagina-ordem-servico .botao-pdf {
+  width: 330px !important;
+  min-width: 330px !important;
+  max-width: 330px !important;
+  flex-basis: 330px !important;
+  white-space: nowrap !important;
+}
+
+@media (min-width: 821px) {
+  body.pagina-ordem-servico .conteudo {
+    margin-top: 18px !important;
+  }
+
+  body.pagina-ordem-servico .conteudo > h2 {
+    margin-bottom: 18px !important;
+  }
+}
+
+@media (max-width: 420px) {
+  body.pagina-ordem-servico .botao-pdf {
+    width: min(330px, 100%) !important;
+    min-width: 0 !important;
+    max-width: 330px !important;
+    flex-basis: 330px !important;
+  }
+}
+
+/* Ordem de Serviço — ajuste pontual de espaçamento dos três botões.
+   Mantém tamanhos, cores e alinhamento em pirâmide já aprovados. */
+@media (min-width: 761px) {
+  body.pagina-ordem-servico .botao-pdf {
+    margin-top: 18px !important;
+  }
+
+  body.pagina-ordem-servico .acoes {
+    margin-top: 14px !important;
+  }
+}
+
+
+/* =========================================================
+   CADASTRO DE CLIENTE — encaixe vertical em 100% de zoom
+   Mantém a ordem e o design; compacta apenas espaços/alturas
+   em notebooks para exibir os botões completos sem rolagem.
+   ========================================================= */
+@media (min-width: 701px) and (min-height: 650px) and (max-height: 950px) {
+  html:has(body.pagina-cadastro-cliente),
+  body.pagina-cadastro-cliente {
+    height: 100% !important;
+    min-height: 100% !important;
+    overflow-y: hidden !important;
+  }
+
+  body.pagina-cadastro-cliente .conteudo {
+    height: calc(100vh - 86px) !important;
+    padding-top: 8px !important;
+    padding-bottom: 5px !important;
+  }
+
+  body.pagina-cadastro-cliente .cadastro h2 {
+    margin-bottom: 5px !important;
+    font-size: 32px !important;
+    line-height: 1.05 !important;
+  }
+
+  body.pagina-cadastro-cliente .formulario {
+    padding-top: 9px !important;
+    padding-bottom: 9px !important;
+  }
+
+  body.pagina-cadastro-cliente .grupo-campo {
+    margin-bottom: 3px !important;
+  }
+
+  body.pagina-cadastro-cliente .grupo-campo > label {
+    min-height: 0 !important;
+    margin-bottom: 1px !important;
+    font-size: 18px !important;
+    line-height: 1.05 !important;
+  }
+
+  body.pagina-cadastro-cliente .grupo-campo input {
+    height: 31px !important;
+    min-height: 31px !important;
+  }
+
+  body.pagina-cadastro-cliente .requisitos-senha {
+    margin: 3px 0 5px !important;
+    font-size: 11px !important;
+    line-height: 1.18 !important;
+  }
+
+  body.pagina-cadastro-cliente .requisitos-senha strong {
+    margin-bottom: 2px !important;
+    font-size: 11px !important;
+  }
+
+  body.pagina-cadastro-cliente .acoes {
+    margin-top: 5px !important;
+    gap: 14px !important;
+  }
+}

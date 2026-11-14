@@ -1,0 +1,294 @@
+/* =========================================================
+   PADRÃO GLOBAL DE BOTÕES DE AÇÃO — MIMETIC SOFT
+   Tamanho médio e coerente. Os botões PIX/DÉBITO/CRÉDITO/BOLETO
+   usam .forma-pagamento e não são afetados por este arquivo.
+   ========================================================= */
+:root { --botao-altura-padrao: 48px; --botao-largura-padrao: 180px; }
+
+.botao-voltar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 48px;
+  min-width: 180px;
+
+  background: transparent;
+  border: 2px solid #c62828;
+  border-radius: 8px;
+  color: #c62828;
+
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  text-decoration: none;
+
+  cursor: pointer;
+  transition: background-color .2s, color .2s, transform .1s;
+}
+
+
+.botao-voltar:hover {
+    background-color: #c62828; 
+    color: #ffffff;    
+    border-color: #c62828;    
+    align-items: center;
+  justify-content: center;      
+}
+
+.botao-confirmar,
+.botao-entrar,
+.botao-cadastro,
+.botao-confirmar-integrado,
+.botao-pdf { 
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 48px;
+  min-width: 180px;
+
+  background: transparent;
+  border: 2px solid #4dc628;
+  border-radius: 8px;
+  color: #4dc628;
+
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  text-decoration: none;
+
+  cursor: pointer;
+  transition: background-color .2s, color .2s, transform .1s;
+    
+}
+
+/* Para telas onde o botão precisa de espaço */
+.botao-voltar-espaco, 
+.botao-confirmar-espaco {
+  margin-top: 20px; 
+}
+
+.botao-confirmar:hover,
+.botao-entrar:hover,
+.botao-cadastro:hover,
+.botao-confirmar-integrado:hover,
+.botao-pdf:hover {
+    align-items: center;
+    justify-content: center;
+    background-color: #4dc628; 
+    color: #ffffff;
+    border-color: #4dc628;                 
+}
+
+
+/* Ações pequenas mantêm proporção adequada à função. */
+.botao-copiar, .remover-servico { min-height: 30px; }
+.adicionar-servico { min-height: 38px; padding: 7px 14px !important; font-size: 14px !important; }
+
+@media (max-width: 500px) {
+    .botao-voltar, .botao-confirmar, .botao-entrar, .botao-cadastro,
+    .botao-confirmar-integrado, .botao-pdf {
+        width: min(100%, var(--botao-largura-padrao)) !important;
+        flex: 0 1 var(--botao-largura-padrao) !important;
+    }
+}
+
+/* Botão para limpar/apagar informações do protótipo. */
+.botao-apagar-informacoes {
+  min-width: 225px; height: 60px; padding: 0 24px;
+  border: 2px solid #c62828; border-radius: 10px;
+  background: #fff; color: #c62828; font: inherit; font-weight: 800;
+  cursor: pointer; transition: .2s ease;
+}
+.botao-apagar-informacoes:hover { background: #c62828; color: #fff; transform: translateY(-1px); }
+@media (max-width: 560px) { .botao-apagar-informacoes { min-width: 0; width: 100%; max-width: 225px; } }
+
+
+/* Exclusão individual de registros salvos. */
+.botao-apagar-registro {
+  margin: 7px 10px 7px auto;
+  min-width: 88px;
+  min-height: 34px;
+  padding: 7px 12px;
+  border: 2px solid #c62828;
+  border-radius: 7px;
+  background: #fff;
+  color: #c62828;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background-color .2s ease, color .2s ease, transform .15s ease;
+}
+.botao-apagar-registro:hover { background:#c62828; color:#fff; transform:translateY(-1px); }
+@media (max-width:700px){ .botao-apagar-registro{ width:auto; min-width:84px; margin:8px 12px 10px auto; } }
+
+/* =========================================================
+   PADRÃO DEFINITIVO — referência: botões da tela Boleto
+   Botões principais: 180 x 48 px. A repetição da classe aumenta
+   a especificidade para neutralizar tamanhos antigos das telas.
+   PIX / DÉBITO / CRÉDITO / BOLETO (.forma-pagamento) ficam intocados.
+   ========================================================= */
+html body button.botao-voltar.botao-voltar,
+html body button.botao-confirmar.botao-confirmar,
+html body button.botao-entrar.botao-entrar,
+html body button.botao-cadastro.botao-cadastro,
+html body button.botao-confirmar-integrado.botao-confirmar-integrado,
+html body button.botao-pdf.botao-pdf {
+    box-sizing: border-box !important;
+    width: 180px !important;
+    min-width: 180px !important;
+    max-width: 180px !important;
+    height: 48px !important;
+    min-height: 48px !important;
+    max-height: 48px !important;
+    padding: 0 18px !important;
+    border-radius: 7px !important;
+    font-size: 18px !important;
+    font-weight: 700 !important;
+    line-height: 1.1 !important;
+    flex: 0 0 180px !important;
+}
+
+/* Em telas muito estreitas, preserva o padrão visual sem provocar corte horizontal. */
+@media (max-width: 420px) {
+    html body button.botao-voltar.botao-voltar,
+    html body button.botao-confirmar.botao-confirmar,
+    html body button.botao-entrar.botao-entrar,
+    html body button.botao-cadastro.botao-cadastro,
+    html body button.botao-confirmar-integrado.botao-confirmar-integrado,
+    html body button.botao-pdf.botao-pdf {
+        width: min(180px, 100%) !important;
+        min-width: 0 !important;
+        max-width: 180px !important;
+        flex: 0 1 180px !important;
+    }
+}
+
+/* Ordem de Serviço: somente o comprimento horizontal do botão de PDF.
+   Mantém altura, posição e organização em pirâmide já aprovadas. */
+html body.pagina-ordem-servico button#gerar-pdf.botao-pdf {
+    width: auto !important;          /* Largura automática baseada no conteúdo */
+    min-width: 250px !important;     /* Largura mínima para não ficar muito pequeno */
+    max-width: 100% !important;      /* Não ultrapassa o container */
+    white-space: normal !important;  /* Permite quebra de linha no texto */
+    height: auto !important;         /* Altura automática */
+    min-height: 48px !important;     /* Mantém a altura mínima padrão */
+    padding: 10px 20px !important;   /* Espaçamento interno confortável */
+    line-height: 1.2 !important;     /* Espaçamento entre linhas */
+    text-align: center !important;   /* Centraliza o texto */
+}
+
+@media (max-width: 420px) {
+    html body.pagina-ordem-servico button#gerar-pdf.botao-pdf {
+        width: min(300px, 100%) !important;
+        min-width: 0 !important;
+        max-width: 300px !important;
+        flex-basis: auto !important;
+    }
+}
+
+
+/* =========================================================
+   BOTÕES DE FORMA DE PAGAMENTO — MIMETIC SOFT
+   Classes: .forma-pagamento
+   Cores editáveis individualmente via variável --cor-botao.
+   ========================================================= */
+
+.forma-pagamento {
+  /* Variável de cor padrão (fallback). 
+     Se nenhuma classe específica for usada, fica o vermelho padrão. */
+  --cor-botao: #c62828;
+
+  /* Layout e Tamanho (Maiores que os botões de ação padrão) */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 100px;
+  padding: 20px;
+
+  /* Aparência (Usa a variável de cor) */
+  background: transparent;
+  border: 2px solid var(--cor-botao);
+  border-radius: 8px;
+  color: var(--cor-botao);
+
+  /* Tipografia */
+  font-family: inherit;
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  text-decoration: none;
+
+  /* Interação */
+  cursor: pointer;
+  transition: background-color .2s ease, color .2s ease, transform .1s ease;
+}
+
+/* Efeito Hover (Preenchimento com a cor da variável, texto branco) */
+.forma-pagamento:hover {
+  background-color: var(--cor-botao);
+  color: #ffffff;
+  border-color: var(--cor-botao);
+}
+
+/* Efeito Active (Clique) */
+.forma-pagamento:active {
+  transform: scale(0.98);
+}
+
+
+/* =========================================================
+   CORES INDIVIDUAIS - BOTÕES DE PAGAMENTO (Edite aqui)
+   ========================================================= */
+
+/* PIX - Exemplo: Verde Esmeralda (Padrão do mercado) */
+.forma-pagamento.pix {
+  --cor-botao: #009688; 
+}
+
+/* DÉBITO - Exemplo: Azul */
+.forma-pagamento.debito {
+  --cor-botao: #1976d2; 
+}
+
+/* CRÉDITO - Exemplo: Roxo */
+.forma-pagamento.credito {
+  --cor-botao: #7b1fa2; 
+}
+
+/* BOLETO - Exemplo: Laranja */
+.forma-pagamento.boleto {
+  --cor-botao: #f57c00; 
+}
+
+
+/* =========================================================
+   GRID DE ORGANIZAÇÃO
+   ========================================================= */
+.container-formas-pagamento {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  max-width: 600px;
+}
+
+@media (max-width: 480px) {
+  .container-formas-pagamento {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  
+  .forma-pagamento {
+    min-height: 80px;
+    font-size: 1.1rem;
+  }
+}

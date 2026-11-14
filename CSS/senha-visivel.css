@@ -1,0 +1,48 @@
+/* Botão global para mostrar/ocultar campos de senha */
+.campo-senha-visivel {
+    position: relative;
+    width: 100%;
+}
+.campo-senha-visivel > input {
+    width: 100%;
+    padding-right: 48px !important;
+}
+.botao-ver-senha {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #5f6368;
+    border-radius: 50%;
+    z-index: 2;
+}
+.botao-ver-senha:hover { background: rgba(0,0,0,.06); color: #222; }
+.botao-ver-senha:focus-visible { outline: 2px solid #cf2027; outline-offset: 2px; }
+.botao-ver-senha svg { width: 21px; height: 21px; pointer-events: none; }
+
+/* Requisitos visuais de senha compartilhados entre criação e redefinição. */
+.requisitos-senha {
+    margin: 4px 0 12px;
+    text-align: left;
+    font-size: 12px;
+    line-height: 1.45;
+}
+.requisitos-senha strong {
+    display: block;
+    margin-bottom: 3px;
+    color: #555;
+    font-size: 12px;
+    font-weight: 600;
+}
+.requisitos-senha span { display: block; font-weight: 600; }
+.requisitos-senha span.invalido { color: #e53935; }
+.requisitos-senha span.valido { color: #43a047; }

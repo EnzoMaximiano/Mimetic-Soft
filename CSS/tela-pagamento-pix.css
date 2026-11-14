@@ -1,0 +1,180 @@
+/* =========================================================
+   CORES PRINCIPAIS
+   ========================================================= */
+:root {
+  --cor-vermelho:#FF464C;
+  --cor-vermelho-hover:#E83E44;
+  --cor-fundo:#F0F0F0;
+  --cor-branco:#FFFFFF;
+  --cor-texto:#666666;
+  --cor-menu-hover:rgba(255,255,255,.16);
+  --cor-linha:#F0F0F0;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;background:var(--cor-fundo);font-family:Arial,Helvetica,sans-serif;color:var(--cor-texto)}
+.cabecalho{position:relative;height:44px;display:flex;align-items:center;padding:0 28px 0 89px;background:var(--cor-vermelho);border-radius:0 0 11px 11px}
+.logo{position:absolute;left:10px;top:3px;width:62px;height:78px;object-fit:contain;z-index:2}
+.cabecalho h1{color:white;font-size:31px;line-height:1}
+.menu-funcionario{margin-left:auto;display:flex;align-items:center;gap:8px;border:0;background:transparent;color:white;font-size:15px;padding:6px 10px;border-radius:7px;cursor:pointer}
+.menu-funcionario:hover,.menu-funcionario:focus-visible{background:var(--cor-menu-hover)}
+.seta{font-size:21px}
+
+.conteudo{display:flex;justify-content:center;padding:29px 20px 16px}
+.card-pix{width:460px;min-height:427px;background:white;border-radius:7px;padding:40px 67px 15px;text-align:center}
+.titulo-tipo-pix{color:var(--cor-vermelho);font-size:32px;font-weight:500;line-height:1;margin:0 0 24px 0;text-align:center}
+.instrucao-principal{font-size:15px;margin-bottom:11px}
+.valor{font-size:14px;margin-top:4px;color:#777}
+.codigo-pix{height:17px;border:1px solid var(--cor-linha);margin:10px 0 12px}
+.instrucao-secundaria{text-align:center;font-size:14px;line-height:18px;margin-left:0}
+.expiracao{font-size:11px;margin-top:15px;color:#777}
+.botao-voltar{width:160px;height:59px;margin-top:15px;border:2px solid var(--cor-vermelho);border-radius:7px;background:white;color:var(--cor-vermelho);font-size:23px;font-weight:700;cursor:pointer;transition:.18s}
+.botao-voltar:hover,.botao-voltar:focus-visible{background:var(--cor-vermelho);color:white}
+
+/* QR Code visual, sem dependência de biblioteca externa */
+.qr-code{position:relative;width:144px;height:144px;margin:0 auto;border:5px solid #000;background:
+repeating-linear-gradient(0deg,transparent 0 8px,#000 8px 13px,transparent 13px 18px),
+repeating-linear-gradient(90deg,transparent 0 9px,#000 9px 14px,transparent 14px 20px);
+overflow:hidden}
+.finder{position:absolute;width:38px;height:38px;border:6px solid #000;background:#fff;z-index:2}
+.finder i{position:absolute;inset:7px;background:#000}
+.f1{left:5px;top:5px}.f2{right:5px;top:5px}.f3{left:5px;bottom:5px}
+.pixels{position:absolute;left:53px;top:48px;width:75px;height:80px;background:
+linear-gradient(90deg,#000 8px,transparent 8px 16px,#000 16px 25px,transparent 25px 33px,#000 33px 42px,transparent 42px),
+linear-gradient(#000 7px,transparent 7px 15px,#000 15px 22px,transparent 22px 31px,#000 31px 40px,transparent 40px);
+z-index:3}
+
+@media(max-width:560px){
+ .cabecalho{padding-left:76px;padding-right:10px}.logo{width:54px;height:69px}.cabecalho h1{font-size:23px}.menu-funcionario{font-size:12px}
+ .card-pix{width:100%;padding-left:30px;padding-right:30px}
+}
+
+/* Integração do fluxo de pagamento */
+.acoes-integradas{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:12px}.botao-confirmar-integrado{min-height:48px;padding:10px 22px;border:0;border-radius:8px;background:transparent;color:#fff;font-weight:700;font-size:16px;cursor:pointer;transition:.2s}.botao-confirmar-integrado:hover{background:#7FC866}@media(max-width:500px){.acoes-integradas{flex-direction:column}.acoes-integradas button{width:100%}}
+
+
+/* Botões compactos da etapa PIX, no mesmo padrão visual das telas de pagamento. */
+.acoes-integradas {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+.botao-confirmar-integrado,
+.acoes-integradas .botao-confirmar,
+.acoes-integradas .botao-voltar {
+  box-sizing: border-box;
+  width: 174px;
+  min-width: 174px;
+  max-width: 174px;
+  height: 42px;
+  min-height: 42px;
+  margin-top: 0;
+  padding: 0 12px;
+  border-radius: 7px;
+  font-size: 16px;
+  font-weight: 700;
+}
+@media (min-width: 561px) {
+  html, body { height: 100%; overflow: hidden; }
+  .conteudo { padding-top: 22px; padding-bottom: 10px; }
+  .card-pix { min-height: 0; padding-top: 28px; padding-bottom: 12px; }
+}
+@media (max-width: 560px) {
+  html, body { overflow-y: auto; }
+  .acoes-integradas { flex-direction: column; }
+  .acoes-integradas .botao-confirmar-integrado,
+  .acoes-integradas .botao-voltar { width: 174px; min-width: 174px; max-width: 174px; }
+}
+@media (max-width: 520px) {
+  .card-pix { width: calc(100% - 24px); min-height: 0; padding: 28px 20px 18px; }
+}
+
+/* PIX: container e conteúdo ampliados. */
+.card-pix{width:min(620px,calc(100% - 40px));padding:42px 70px 24px}.instrucao-principal{font-size:21px;margin-bottom:18px}.valor{font-size:19px;margin-top:12px}.instrucao-secundaria{font-size:18px;line-height:1.45}.expiracao{font-size:14px;margin-top:18px}.qr-code{width:190px;height:190px}.codigo-pix{height:24px;margin:16px 0}
+@media(max-width:560px){.card-pix{width:calc(100% - 24px);padding:30px 22px 20px}.qr-code{width:170px;height:170px}.instrucao-principal{font-size:19px}}
+
+/* Ajustes finais da tela PIX: título no verde do pagamento e confirmação em uma linha. */
+.titulo-tipo-pix {
+  color: transparent;
+}
+
+.acoes-integradas .botao-confirmar-integrado {
+  width: 230px;
+  min-width: 230px;
+  max-width: 230px;
+  white-space: nowrap;
+}
+
+@media (max-width: 560px) {
+  .acoes-integradas .botao-confirmar-integrado {
+    width: min(230px, 100%);
+    min-width: 0;
+    max-width: 100%;
+    white-space: nowrap;
+  }
+}
+
+
+/* Ajuste final PIX: usa exatamente a cor do hover da seleção e cabe em 100% de zoom. */
+.titulo-tipo-pix { color:#32BCAD; }
+@media (min-width:561px) {
+  .conteudo {
+    height:calc(100dvh - 86px);
+    min-height:0;
+    padding:12px 20px 8px;
+    overflow:hidden;
+    align-items:flex-start;
+  }
+  .card-pix {
+    width:min(620px,calc(100% - 40px));
+    max-height:100%;
+    min-height:0;
+    padding:22px 70px 12px;
+  }
+  .titulo-tipo-pix { margin-bottom:12px; }
+  .instrucao-principal { margin-bottom:12px; }
+  .qr-code { width:180px; height:180px; }
+  .valor { margin-top:6px; }
+  .codigo-pix { height:20px; margin:10px 0; }
+  .expiracao { margin-top:10px; }
+  .acoes-integradas { margin-top:8px; gap:8px; }
+}
+
+/* Cor da confirmação acompanha exatamente a identidade do PIX na seleção. */
+.pagina-pix .botao-confirmar-integrado {
+  background:#32BCAD;
+}
+.pagina-pix .botao-confirmar-integrado:hover,
+.pagina-pix .botao-confirmar-integrado:focus-visible {
+  background:#32BCAD;
+}
+
+/* CONFIRMAR PIX: branco no repouso e cor oficial no hover. */
+.pagina-pix .botao-confirmar-integrado {
+  background:#fff;
+  color:#32BCAD;
+  border:2px solid #32BCAD;
+  transition:background-color .18s ease,color .18s ease,box-shadow .18s ease;
+}
+.pagina-pix .botao-confirmar-integrado:hover,
+.pagina-pix .botao-confirmar-integrado:focus-visible {
+  background:#32BCAD;
+  color:#fff;
+  box-shadow:0 5px 12px rgba(0,0,0,.14);
+}
+
+.pagina-pix .acoes-integradas .botao-confirmar-integrado {
+  background: transparent;      /* Remove o fundo verde */
+  color: #7FC866;               /* Texto na cor verde */
+  border: 2px solid #7FC866;    /* Adiciona borda verde */
+  transition: background-color .2s ease, color .2s ease;
+}
+
+.pagina-pix .acoes-integradas .botao-confirmar-integrado:hover,
+.pagina-pix .acoes-integradas .botao-confirmar-integrado:focus-visible {
+  background:#7FC866;
+  color:#FFFFFF;
+}
+
+

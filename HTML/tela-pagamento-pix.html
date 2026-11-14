@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MIMETIC SOFT - Pagamento PIX</title>
+  <link rel="stylesheet" href="../CSS/tela-pagamento-pix.css">
+    <link rel="stylesheet" href="../CSS/cabecalho-padrao.css">
+    <link rel="stylesheet" href="../CSS/botoes-padrao.css">
+    <link rel="stylesheet" href="../CSS/responsividade-global.css">
+    <!--TELA CRIADA POR: MATHEUS LINO-->
+</head>
+<body class="pagina-pix">
+<header class="cabecalho">
+  <img src="../assets/logo.png" alt="Logo MIMETIC SOFT" class="logo">
+  <h1>MIMETIC SOFT</h1>
+  <button type="button" class="menu-funcionario">
+    <span>Nome Funcionário</span><span class="seta">⌄</span>
+  </button>
+</header>
+
+<main class="conteudo">
+  <section class="card-pix">
+    <h2 class="titulo-tipo-pix">PIX</h2>
+    <p class="instrucao-principal">Escaneie o QR Code para pagar</p>
+
+    <!-- QR ilustrativo de front-end. O backend poderá substituir pelo QR PIX real. -->
+    <div class="qr-code" aria-label="QR Code ilustrativo">
+      <div class="finder f1"><i></i></div>
+      <div class="finder f2"><i></i></div>
+      <div class="finder f3"><i></i></div>
+      <div class="pixels"></div>
+    </div>
+
+    <p class="valor" id="valor-pix">R$ 110,00</p>
+
+    <!-- Espaço visual do protótipo para futuro código PIX copia e cola -->
+    <div class="codigo-pix" title="Área reservada para código PIX"></div>
+
+    <p class="instrucao-secundaria">
+      Abra o app do seu banco e escaneie<br>
+      o código para realizar o pagamento.
+    </p>
+
+    <p class="expiracao">Este QR Code expira em <span id="contador">29:45</span></p>
+
+    <div class="acoes-integradas"><button type="button" class="botao-confirmar-integrado" id="botao-confirmar-pix">CONFIRMAR PAGAMENTO</button><button type="button" class="botao-voltar" id="botao-voltar">VOLTAR</button></div>
+  </section>
+</main>
+
+<script src="../JAVASCRIPT/api-client.js"></script>
+<script src="../JAVASCRIPT/tela-comum.js"></script>
+<script src="../JAVASCRIPT/tela-pagamento-pix.js"></script>
+<script src="../JAVASCRIPT/app-core.js"></script>
+</body>
+</html>

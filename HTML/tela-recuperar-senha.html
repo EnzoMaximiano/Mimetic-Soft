@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MIMETIC SOFT - Recuperar Senha</title>
+    <link rel="stylesheet" href="../CSS/tela-recuperar-senha.css">
+    <link rel="stylesheet" href="../CSS/cabecalho-padrao.css">
+    <link rel="stylesheet" href="../CSS/botoes-padrao.css">
+    <link rel="stylesheet" href="../CSS/responsividade-global.css">
+    <!--TELA CRIADA POR: MATHEUS LINO-->
+</head>
+<body>
+
+    <!-- Cabeçalho padrão do MIMETIC SOFT -->
+    <header class="cabecalho">
+        <img src="../assets/logo.png" alt="Logo MIMETIC SOFT" class="logo">
+
+        <h1>MIMETIC SOFT</h1>
+
+        <button type="button" class="menu-funcionario" id="menu-funcionario">
+            <span>Nome Funcionário</span>
+            <span class="seta">⌄</span>
+        </button>
+    </header>
+
+    <main class="conteudo-principal">
+        <section class="introducao">
+            <h2>ESQUECEU SUA SENHA?</h2>
+            <p>Não se preocupe! Informe o e-mail cadastrado e enviaremos um código de 6 dígitos para redefinir sua senha.</p>
+        </section>
+
+        <!-- Formulário para solicitação de redefinição de senha -->
+        <section class="card-recuperacao">
+            <form id="form-recuperar-senha" autocomplete="off">
+                <div class="campo">
+                    <label for="email">E-mail:<span class="asterisco-obrigatorio" aria-hidden="true">*</span></label>
+                    <input type="email" id="email" name="email" required autocomplete="off">
+                </div>
+
+                <div class="campo">
+                    <label for="repetir-email">Repetir E-mail:<span class="asterisco-obrigatorio" aria-hidden="true">*</span></label>
+                    <input type="email" id="repetir-email" name="repetir-email" required autocomplete="off">
+                </div>
+
+                <div class="acoes">
+                    <button type="submit" class="botao-confirmar">CONFIRMAR</button>
+                    <button type="button" class="botao-voltar" id="botao-voltar">VOLTAR</button>
+                </div>
+            </form>
+        </section>
+    </main>
+
+    <script src="../JAVASCRIPT/api-client.js"></script>
+    <script src="../JAVASCRIPT/tela-comum.js"></script>
+    <script src="../JAVASCRIPT/tela-recuperar-senha.js"></script>
+<script src="../JAVASCRIPT/app-core.js"></script>
+</body>
+</html>

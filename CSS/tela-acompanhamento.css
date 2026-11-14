@@ -1,0 +1,739 @@
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--vermelho:#ff464c;--vermelho-hover:#e83e44;--fundo:#f0f0f0;--branco:#fff;--texto:#171717;--linha:#9b9b9b;--ponto:#d9d9d9;--menu-hover:rgba(255,255,255,.16)}
+body{font-family:Arial,sans-serif;background:var(--fundo);color:var(--texto);min-height:100vh}
+.cabecalho{position:relative;height:58px;margin:15px 17px 0;background:var(--vermelho);border-radius:0 0 11px 11px;display:flex;align-items:center;padding:0 35px 0 90px;color:var(--branco)}
+.logo{position:absolute;left:9px;top:-12px;width:70px;height:88px;object-fit:contain;z-index:2}
+.cabecalho h1{font-size:36px;font-weight:700}
+.menu-funcionario{margin-left:auto;border:0;background:transparent;color:#fff;font-size:18px;padding:10px 12px;border-radius:7px;cursor:pointer;transition:.2s}
+.menu-funcionario:hover{background:var(--menu-hover)}
+.conteudo{padding:45px 7vw 20px}
+.acompanhamento{text-align:center;max-width:980px;margin:auto}
+.acompanhamento h2{font-size:36px;line-height:1.18;font-weight:300}
+.progresso{position:relative;margin:65px auto 0;max-width:850px;height:165px}
+.linha{position:absolute;top:18px;left:5%;right:5%;height:1px;background:var(--linha)}
+.etapas{display:grid;grid-template-columns:repeat(4,1fr);position:relative}
+.etapa{display:flex;flex-direction:column;align-items:center}
+.ponto{width:33px;height:33px;border-radius:50%;background:var(--ponto);z-index:1}
+.haste{height:62px;width:1px;background:var(--linha)}
+.etapa p{font-size:18px;line-height:1.15}
+.bandeira{position:absolute;right:-40px;top:-40px;font-size:50px}
+.mensagem{font-size:22px;line-height:1.2;margin-top:18px}
+.botao-voltar{margin-top:18px;width:188px;height:70px;border:2px solid var(--vermelho);border-radius:7px;background:transparent;color:var(--vermelho);font-size:27px;font-weight:700;cursor:pointer;transition:.2s}
+.botao-voltar:hover{background:var(--vermelho);color:#fff}
+
+/* RESPONSIVIDADE: esta estrutura se reorganiza para telas menores sem perder o fluxo das etapas. */
+@media(max-width:700px){
+ .cabecalho{margin:8px 8px 0;height:54px;padding-left:68px;padding-right:8px}
+ .logo{width:55px;height:70px;top:-6px}
+ .cabecalho h1{font-size:20px}
+ .menu-funcionario{font-size:12px;padding:8px 5px}
+ .conteudo{padding:35px 18px 25px}
+ .acompanhamento h2{font-size:25px}
+ .progresso{height:auto;margin-top:40px;text-align:left;padding-left:22px}
+ .linha{top:0;bottom:0;left:37px;width:1px;height:auto;right:auto}
+ .etapas{display:flex;flex-direction:column;gap:25px}
+ .etapa{flex-direction:row;align-items:center;min-height:55px}
+ .ponto{width:31px;height:31px;flex:0 0 31px}
+ .haste{display:none}
+ .etapa p{font-size:16px;margin-left:20px}
+ .bandeira{right:5px;bottom:-15px;top:auto;font-size:42px}
+ .mensagem{font-size:18px;margin-top:45px}
+ .botao-voltar{width:165px;height:58px;font-size:22px;margin-top:25px}
+}
+
+/* ===== INDICADOR DINÂMICO DO PROGRESSO ===== */
+.progresso {
+    --etapa-atual: 1;
+}
+
+/* Carrinho que acompanha a etapa atual */
+.carrinho {
+    position: absolute;
+    top: -26px;
+    left: calc(12.5% + (var(--etapa-atual) - 1) * 25%);
+    transform: translateX(-50%);
+    z-index: 4;
+    font-size: 37px;
+    line-height: 1;
+    transition: left .55s ease;
+}
+
+/* Por padrão, etapas ainda não alcançadas ficam bem claras. */
+.etapa .ponto {
+    background: #e5e5e5;
+    transition: background-color .3s ease;
+}
+
+.etapa p {
+    color: #b8b8b8;
+    transition: color .3s ease, font-weight .3s ease;
+}
+
+/* Etapas que o carrinho já percorreu. */
+.etapa.concluida .ponto {
+    background: #bcbcbc;
+}
+
+.etapa.concluida p {
+    color: #555;
+}
+
+/* Etapa onde o carrinho está: texto preto para destacar ao usuário. */
+.etapa.atual .ponto {
+    background: #9f9f9f;
+}
+
+.etapa.atual p {
+    color: #111;
+    font-weight: 600;
+}
+
+/* A linha percorrida ganha um tom um pouco mais escuro. */
+.progresso::after {
+    content: "";
+    position: absolute;
+    top: 18px;
+    left: 5%;
+    height: 2px;
+    width: calc((var(--etapa-atual) - 1) * 30%);
+    max-width: 90%;
+    background: #777;
+    z-index: 0;
+    transition: width .55s ease;
+}
+
+@media(max-width:700px){
+    .carrinho {
+        left: 7px;
+        top: calc((var(--etapa-atual) - 1) * 80px + 5px);
+        transform: translateX(-50%);
+        font-size: 31px;
+        transition: top .55s ease;
+    }
+
+    .progresso::after {
+        top: 0;
+        left: 37px;
+        width: 2px;
+        height: calc((var(--etapa-atual) - 1) * 80px);
+        max-height: 100%;
+        transition: height .55s ease;
+    }
+}
+
+/* Ícone do carro: frente e indicador visual sempre apontados para a DIREITA. */
+.icone-carro-direita {
+    display: block;
+    width: 52px;
+    height: 30px;
+    color: #555;
+}
+
+@media(max-width:700px){
+    .icone-carro-direita {
+        width: 45px;
+        height: 27px;
+    }
+}
+
+/* Evita barras de rolagem causadas por elementos decorativos do progresso. */
+html, body {
+    width: 100%;
+    overflow-x: hidden;
+}
+
+body {
+    min-height: 100vh;
+}
+
+/* Mantém a bandeira e o carro dentro da área útil sem gerar overflow horizontal. */
+.acompanhamento {
+    overflow: visible;
+}
+
+.progresso {
+    width: calc(100% - 90px);
+}
+
+@media(max-width:700px){
+    .progresso {
+        width: 100%;
+    }
+}
+
+
+/* =========================================================
+   RESPONSIVIDADE FINAL - TELA DO MECÂNICO
+   Desktop, notebook, tablet e celular.
+   Mantém o Figma horizontal quando há espaço e reorganiza
+   o progresso verticalmente em telas pequenas.
+   ========================================================= */
+
+html, body {
+    max-width: 100%;
+    overflow-x: clip;
+}
+
+img, svg {
+    max-width: 100%;
+}
+
+/* Escala fluida para monitores e notebooks */
+.cabecalho {
+    width: calc(100% - 34px);
+    max-width: 1800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.conteudo {
+    width: 100%;
+    padding-left: clamp(18px, 6vw, 90px);
+    padding-right: clamp(18px, 6vw, 90px);
+}
+
+.acompanhamento {
+    width: 100%;
+    max-width: 1100px;
+}
+
+.acompanhamento h2 {
+    font-size: clamp(27px, 2.5vw, 36px);
+}
+
+.progresso {
+    width: min(90%, 900px);
+    max-width: 900px;
+}
+
+.mensagem {
+    font-size: clamp(18px, 1.6vw, 22px);
+}
+
+/* Notebook / tablet horizontal */
+@media (max-width: 1100px) {
+    .cabecalho h1 {
+        font-size: 30px;
+    }
+
+    .menu-funcionario {
+        font-size: 16px;
+    }
+
+    .conteudo {
+        padding-top: 42px;
+    }
+
+    .progresso {
+        width: 88%;
+    }
+
+    .etapa p {
+        font-size: 16px;
+    }
+
+    .bandeira {
+        right: -34px;
+        font-size: 44px;
+    }
+}
+
+/* Tablet */
+@media (max-width: 820px) {
+    .cabecalho {
+        width: calc(100% - 20px);
+        margin-top: 10px;
+        height: 56px;
+        padding-left: 78px;
+        padding-right: 14px;
+    }
+
+    .logo {
+        width: 62px;
+        height: 78px;
+        top: -8px;
+    }
+
+    .cabecalho h1 {
+        font-size: 25px;
+    }
+
+    .menu-funcionario {
+        font-size: 14px;
+        white-space: nowrap;
+    }
+
+    .acompanhamento h2 {
+        font-size: 28px;
+    }
+
+    .progresso {
+        width: 92%;
+        margin-top: 55px;
+    }
+
+    .etapa p {
+        font-size: 14px;
+    }
+
+    .carrinho {
+        font-size: 32px;
+    }
+
+    .icone-carro-direita {
+        width: 47px;
+        height: 28px;
+    }
+
+    .bandeira {
+        right: -28px;
+        font-size: 40px;
+    }
+}
+
+/* Celulares e tablets pequenos:
+   o progresso muda para vertical para evitar aperto/cortes. */
+@media (max-width: 700px) {
+    html, body {
+        overflow-x: hidden;
+    }
+
+    .cabecalho {
+        width: calc(100% - 16px);
+        min-height: 54px;
+        margin: 8px auto 0;
+    }
+
+    .conteudo {
+        padding: 34px 16px 28px;
+    }
+
+    .acompanhamento h2 {
+        font-size: clamp(21px, 6vw, 26px);
+        line-height: 1.25;
+    }
+
+    .progresso {
+        width: min(100%, 430px);
+        max-width: 430px;
+        margin: 38px auto 0;
+        padding: 0 10px 0 20px;
+        min-height: 325px;
+    }
+
+    .linha {
+        left: 35px;
+    }
+
+    .etapas {
+        gap: 20px;
+    }
+
+    .etapa {
+        min-height: 60px;
+    }
+
+    .etapa p {
+        font-size: clamp(14px, 4vw, 16px);
+        line-height: 1.2;
+    }
+
+    .carrinho {
+        left: 5px;
+        top: calc((var(--etapa-atual) - 1) * 80px + 5px);
+    }
+
+    .progresso::after {
+        left: 35px;
+    }
+
+    .bandeira {
+        right: 10px;
+        bottom: -5px;
+        font-size: 38px;
+    }
+
+    .mensagem {
+        margin-top: 30px;
+        font-size: clamp(16px, 4.5vw, 19px);
+        padding: 0 5px;
+    }
+
+    .botao-voltar {
+        width: min(100%, 180px);
+        height: 58px;
+        font-size: 21px;
+    }
+}
+
+/* Celulares médios */
+@media (max-width: 480px) {
+    .cabecalho {
+        padding-left: 62px;
+        padding-right: 7px;
+    }
+
+    .logo {
+        width: 50px;
+        height: 65px;
+        left: 7px;
+        top: -4px;
+    }
+
+    .cabecalho h1 {
+        font-size: 18px;
+        white-space: nowrap;
+    }
+
+    .menu-funcionario {
+        font-size: 11px;
+        padding: 7px 4px;
+    }
+
+    .conteudo {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+}
+
+/* Celulares estreitos (ex.: 320px) */
+@media (max-width: 360px) {
+    .cabecalho {
+        padding-left: 54px;
+    }
+
+    .logo {
+        width: 44px;
+        height: 58px;
+    }
+
+    .cabecalho h1 {
+        font-size: 15px;
+    }
+
+    .menu-funcionario {
+        font-size: 9.5px;
+    }
+
+    .acompanhamento h2 {
+        font-size: 20px;
+    }
+
+    .progresso {
+        padding-left: 14px;
+    }
+
+    .linha,
+    .progresso::after {
+        left: 29px;
+    }
+
+    .etapa p {
+        margin-left: 15px;
+        font-size: 13px;
+    }
+
+    .carrinho {
+        left: 0;
+    }
+
+    .icone-carro-direita {
+        width: 40px;
+    }
+
+    .mensagem {
+        font-size: 16px;
+    }
+}
+
+/* Monitores grandes: limita o crescimento para preservar o Figma. */
+@media (min-width: 1600px) {
+    .conteudo {
+        padding-top: 55px;
+    }
+
+    .acompanhamento {
+        max-width: 1200px;
+    }
+
+    .progresso {
+        max-width: 950px;
+    }
+}
+
+
+/* =========================================================
+   AJUSTE FINAL
+   1) Remove qualquer barra de rolagem horizontal.
+   2) No celular, posiciona a bandeira logo abaixo do fim da
+      linha vertical de progresso.
+   ========================================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    overflow-x: hidden !important;
+}
+
+body {
+    position: relative;
+}
+
+.cabecalho,
+.conteudo,
+.acompanhamento {
+    max-width: 100%;
+}
+
+/* Em telas maiores, preserva o progresso horizontal. */
+@media (min-width: 701px) {
+    .progresso {
+        width: min(88%, 900px);
+        max-width: calc(100% - 90px);
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .bandeira {
+        right: -35px;
+    }
+}
+
+/* No celular, o progresso fica em pé e a bandeira termina
+   exatamente abaixo da linha do tempo. */
+@media (max-width: 700px) {
+    .conteudo {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+
+    .acompanhamento {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .progresso {
+        position: relative;
+        width: min(100%, 430px);
+        max-width: 100%;
+        min-height: 360px;
+        margin: 38px auto 0;
+        padding: 0 10px 48px 20px;
+        overflow: visible;
+    }
+
+    /* Linha vertical */
+    .linha {
+        left: 35px;
+        top: 0;
+        bottom: 45px;
+        height: auto;
+    }
+
+    /* Linha já percorrida */
+    .progresso::after {
+        left: 35px;
+        max-height: calc(100% - 45px);
+    }
+
+    /* A bandeira deixa de ficar na lateral e vai para baixo. */
+    .bandeira {
+        position: absolute;
+        left: 14px;
+        right: auto;
+        top: auto;
+        bottom: 0;
+        width: 44px;
+        text-align: center;
+        font-size: 38px;
+        line-height: 1;
+        transform: none;
+    }
+
+    .carrinho {
+        max-width: 48px;
+    }
+}
+
+/* Ajuste fino para celulares bem estreitos. */
+@media (max-width: 360px) {
+    .progresso {
+        padding-left: 14px;
+        padding-right: 6px;
+    }
+
+    .linha,
+    .progresso::after {
+        left: 29px;
+    }
+
+    .bandeira {
+        left: 8px;
+    }
+}
+
+
+/* =========================================================
+   DIREÇÃO RESPONSIVA DO CARRINHO
+   Desktop / notebook / tablet: aponta para a direita.
+   Celular: gira 90 graus e aponta para baixo, acompanhando
+   a linha vertical do progresso.
+   ========================================================= */
+
+/* Direção padrão: avanço horizontal para a direita. */
+.icone-carro-direita {
+    transform: rotate(0deg);
+    transform-origin: center;
+    transition: transform .3s ease;
+}
+
+/* Quando a linha do tempo vira vertical, o carro também
+   muda de direção para indicar o avanço de cima para baixo. */
+@media (max-width: 700px) {
+    .icone-carro-direita {
+        transform: rotate(90deg);
+    }
+
+    /* Pequeno ajuste de posicionamento após a rotação. */
+    .carrinho {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 48px;
+        height: 48px;
+    }
+}
+
+@media (max-width: 360px) {
+    .carrinho {
+        width: 42px;
+        height: 42px;
+    }
+}
+
+
+/* =========================================================
+   ORIENTAÇÃO RESPONSIVA DA BANDEIRA
+   A posição permanece a mesma.
+   Apenas no celular a bandeira gira para acompanhar
+   visualmente a linha vertical do progresso.
+   ========================================================= */
+
+/* Desktop / notebook / tablet: orientação original. */
+.bandeira {
+    transform: rotate(0deg);
+    transform-origin: center;
+}
+
+/* Celular: mantém a bandeira no final da linha vertical,
+   porém em pé, acompanhando o sentido de cima para baixo. */
+@media (max-width: 700px) {
+    .bandeira {
+        transform: rotate(90deg);
+        transform-origin: center;
+    }
+}
+
+
+/* =========================================================
+   MOBILE - LINHA DO PROGRESSO CENTRALIZADA
+   No celular, todo o conjunto vertical (linha, pontos,
+   carrinho e bandeira) fica no centro da tela.
+   ========================================================= */
+@media (max-width: 700px) {
+    .progresso {
+        width: min(100%, 430px);
+        max-width: 100%;
+        min-height: 360px;
+        margin: 38px auto 0;
+        padding: 0 10px 48px;
+        position: relative;
+    }
+
+    /* Linha principal exatamente no centro. */
+    .linha {
+        left: 50% !important;
+        right: auto !important;
+        transform: translateX(-50%);
+    }
+
+    /* Linha já percorrida acompanha o mesmo centro. */
+    .progresso::after {
+        left: 50% !important;
+        right: auto !important;
+        transform: translateX(-50%);
+    }
+
+    /* Etapas passam a usar o centro como eixo. */
+    .etapas {
+        width: 100%;
+    }
+
+    .etapa {
+        position: relative;
+        width: 100%;
+        min-height: 60px;
+    }
+
+    .etapa .ponto {
+        position: absolute;
+        left: 50% !important;
+        transform: translateX(-50%);
+        margin: 0;
+    }
+
+    /* Textos ficam à direita do eixo, sem deslocar a linha. */
+    .etapa p {
+        width: calc(50% - 38px);
+        margin-left: calc(50% + 38px) !important;
+        margin-right: 0;
+        text-align: left;
+    }
+
+    /* Carrinho acompanha o eixo central. */
+    .carrinho {
+        left: 50% !important;
+        margin-left: -34px;
+        transform: translateX(-50%);
+    }
+
+    /* Bandeira permanece abaixo e centralizada no mesmo eixo. */
+    .bandeira {
+        left: 50% !important;
+        right: auto !important;
+        margin-left: 0;
+        transform: translateX(-50%) rotate(90deg);
+        transform-origin: center;
+    }
+}
+
+/* Em celulares estreitos, mantém o mesmo eixo central. */
+@media (max-width: 360px) {
+    .linha,
+    .progresso::after,
+    .etapa .ponto {
+        left: 50% !important;
+    }
+
+    .etapa p {
+        width: calc(50% - 30px);
+        margin-left: calc(50% + 30px) !important;
+        font-size: 12px;
+    }
+
+    .carrinho {
+        left: 50% !important;
+        margin-left: -29px;
+    }
+
+    .bandeira {
+        left: 50% !important;
+    }
+}
