@@ -91,7 +91,7 @@
     fill(52,y-alturaServicos+17,491,alturaServicos,'0.975 0.975 0.975');
     txt(62,y,9,'SERVIÇOS REALIZADOS',true,'0.34 0.34 0.34'); txt(455,y,9,'PREÇO',true,'0.34 0.34 0.34');
     let sy=y-19;
-    itens.slice(0,8).forEach((item,i)=>{txt(62,sy-(i*18),9.5,item.nome||'',false,'0.18 0.18 0.18');txt(455,sy-(i*18),9.5,`R$ ${item.preco||'0,00'}`,false,'0.18 0.18 0.18');});
+    itens.slice(0,8).forEach((item,i)=>{txt(62,sy-(i*18),9.5,item.nome||'',false,'0.18 0.18 0.18');txt(455,sy-(i*18),9.5,item.preco?`R$ ${item.preco}`:'',false,'0.18 0.18 0.18');});
     if(!itens.length) txt(62,sy,9.5,'Nenhum serviço informado',false,'0.45 0.45 0.45');
     y-=alturaServicos+25;
     // Espaço extra antes dos cards finais para evitar que encostem em "Serviços a realizar".

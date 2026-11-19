@@ -34,7 +34,7 @@ O endereço da API fica em um único lugar: `JAVASCRIPT/api-client.js`
 > `schema.sql` já vem com as mudanças. Sem isso, salvar uma ordem de serviço
 > falha com "Unknown column 'servicos'" (ou 'cliente_nome'). O script também
 > alarga `Funcionario.senha` para `VARCHAR(255)` (cabe o hash da seção 5.3) e pode
-> ser rodado mais de uma vez. **Requer MySQL 8** (o painel usa `JSON_TABLE`).
+> ser rodado mais de uma vez. **Requer MySQL 8** (a conversão do JSON antigo usa `JSON_TABLE`, só durante a migração).
 
 ---
 
@@ -170,9 +170,13 @@ salvar uma ordem, ela passou a guardar os dados do cliente nela mesma:
 
 - `id_cliente` agora aceita **NULL**.
 - Novas colunas: `cliente_nome`, `cliente_cpf`, `cliente_telefone`, `cliente_email`.
-- Nova coluna JSON `servicos`: a lista `[{ "nome": "...", "preco": 150.5 }]` fica
-  na própria linha da ordem (não existe tabela separada de itens). Apagar a ordem
-  apaga os serviços junto, e o painel lê os nomes com `JSON_TABLE`.
+- Nova coluna de **texto** `servicos`: os serviços ficam escritos como as opções da
+  tela, separados por vírgula (ex.: `Troca de óleo, Alinhamento`). Não existe tabela
+  separada de itens. O **preço de cada serviço não é guardado**: o banco guarda só o
+  orçamento total (`orcamento`), somado pela API. Vírgulas digitadas em "Outro serviço"
+  viram espaço. Apagar a ordem apaga os serviços junto, e o painel conta os nomes a
+  partir desse texto. A API devolve `servicos` como lista de nomes. O PDF de uma ordem
+  já salva mostra os nomes e o total, sem valor por item.
 - Aplicar em banco existente: `servidorREST/migracao-ordens.sql`.
 
 #### Clientes (API pronta)

@@ -69,7 +69,7 @@ CREATE TABLE ordem_servico (
   solicitacao VARCHAR(150),
   previsao_conclusao DATE,
   orcamento DECIMAL(10,2) NOT NULL DEFAULT 0,
-  servicos JSON NULL,                     -- NOVO: servicos da OS, [{"nome":"...","preco":150.5}, ...]
+  servicos TEXT NULL,                     -- servicos da OS, como as opcoes da tela: 'Troca de oleo, Alinhamento'
   status VARCHAR(40) NOT NULL DEFAULT 'Aguardando pagamento',
   etapa TINYINT NOT NULL DEFAULT 1,
   forma_pagamento VARCHAR(20),

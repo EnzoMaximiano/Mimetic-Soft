@@ -13,7 +13,9 @@ const router = express.Router();
 // ORDENS DE SERVIÇO, PAGAMENTO E PAINEL DE GESTÃO (README, seção 5.2)
 //
 // Tabela usada: ordem_servico. Os serviços de cada ordem ficam na própria
-// linha, na coluna JSON "servicos" ([{ nome, preco }, ...]). Ver schema.sql.
+// linha, na coluna de TEXTO "servicos", escritos como as opções da tela
+// ("Troca de óleo, Alinhamento"). O preço de cada serviço não é guardado: o banco
+// guarda só o orçamento total (soma calculada aqui). Ver schema.sql.
 // Enquanto a API de CLIENTES não existe, os dados do cliente (nome, CPF,
 // telefone e e-mail) ficam gravados na própria ordem.
 // =========================================================
@@ -37,31 +39,34 @@ const COLUNAS_ORDEM = ` o.id_ordem, o.id_cliente, o.id_funcionario, o.cliente_no
     o.placa, o.veiculo, o.ano_carro, o.solicitacao, o.previsao_conclusao, o.orcamento, o.servicos,
     o.status, o.etapa, o.forma_pagamento, o.criada_em `;
 
-// Monta a ordem no formato JSON que a API devolve ao front-end,
-// juntando a linha da tabela ordem_servico com seus itens (serviços).
+// Separador entre os serviços na coluna de texto "servicos".
+const SEPARADOR_SERVICOS = ', ';
+
+// Lista de serviços -> texto da coluna "servicos", ex.: "Troca de óleo, Alinhamento".
+// Vírgulas dentro do nome (campo "Outro serviço") viram espaço, para não confundir o separador.
+//userC: Vinicius Sanches
+function servicosParaTexto(servicos) {
+    return servicos
+        .map(servico => servico.nome.replace(/,/g, ' ').replace(/\s+/g, ' ').trim())
+        .filter(Boolean)
+        .join(SEPARADOR_SERVICOS);
+}
+
+// Texto da coluna "servicos" -> lista de nomes. Aceita também o formato antigo (JSON
+// [{ nome, preco }]) de bancos que ainda não rodaram a migração.
+//userC: Vinicius Sanches
+function textoParaServicos(valor) {
+    if (!valor) return [];
+    if (Array.isArray(valor)) return valor.map(servico => String(servico?.nome ?? '').trim()).filter(Boolean);
+    return String(valor).split(SEPARADOR_SERVICOS).map(nome => nome.trim()).filter(Boolean);
+}
+
+// Monta a ordem no formato JSON que a API devolve ao front-end, a partir da linha
+// da tabela ordem_servico. "servicos" sai como lista de nomes (as opções escolhidas).
 // Valores em dinheiro saem como NÚMERO (o front-end cuida da formatação R$).
 //USER: Vinicius Sanches
 //userC: Vinicius Sanches
 function montarOrdem(linha) {
-
-    let servicos = [];
-
-    try {
-
-        if (linha.servicos) {
-
-            servicos = typeof linha.servicos === 'string'
-                ? JSON.parse(linha.servicos)
-                : linha.servicos;
-
-        }
-
-    } catch (e) {
-
-        console.error('Erro ao ler serviços da ordem:', e);
-
-        servicos = [];
-    }
 
     return {
 
@@ -88,12 +93,7 @@ function montarOrdem(linha) {
 
         previsao: dataISO(linha.previsao_conclusao),
 
-        servicos: Array.isArray(servicos)
-            ? servicos.map(servico => ({
-                nome: servico.nome,
-                preco: Number(servico.preco || 0)
-            }))
-            : [],
+        servicos: textoParaServicos(linha.servicos),
 
         orcamento: Number(linha.orcamento || 0),
 
@@ -366,7 +366,7 @@ router.post('/ordens', async (req, res) => {
                 solicitacao || null,
                 previsaoTexto,
                 orcamento,
-                JSON.stringify(servicosNormalizados),
+                servicosParaTexto(servicosNormalizados),
                 STATUS_AGUARDANDO,
                 ETAPA_MIN,
                 formaTexto
@@ -629,8 +629,8 @@ function dataHoraSQL(data) {
 // PAINEL DE GESTÃO
 // Os indicadores são calculados no banco (COUNT / GROUP BY), não no navegador:
 //   - servicosMes / servicosMesAnterior: ordens abertas no mês atual e no anterior
-//   - servicosSolicitados: os 2 SERVIÇOS mais frequentes nas ordens (lidos da
-//     coluna JSON "servicos" com JSON_TABLE, ex.: "Troca de óleo"; exige MySQL 8)
+//   - servicosSolicitados: os 2 SERVIÇOS mais frequentes nas ordens (contados a
+//     partir do texto da coluna "servicos", ex.: "Troca de óleo")
 //   - tempoMedioMinutos: null por enquanto (o banco ainda não guarda a data de
 //     conclusão; será calculado quando existir esse campo)
 // ---------------------------------------------------------
@@ -652,22 +652,26 @@ router.get('/painel', async (req, res) => {
             [inicioMesAnterior, inicioMes]
         );
         const [[geral]] = await connection.query('SELECT COUNT(*) AS total FROM ordem_servico');
-        const [maisSolicitados] = await connection.query(
-            `SELECT s.nome AS nome, COUNT(*) AS quantidade
-               FROM ordem_servico o,
-                    JSON_TABLE(o.servicos, '$[*]'
-                        COLUMNS (nome VARCHAR(255) PATH '$.nome')) AS s
-              WHERE s.nome IS NOT NULL AND s.nome <> ''
-              GROUP BY s.nome
-              ORDER BY quantidade DESC, s.nome ASC
-              LIMIT 2`
+        // Conta quantas vezes cada serviço aparece nos textos da coluna "servicos"
+        const [linhasServicos] = await connection.query(
+            "SELECT servicos FROM ordem_servico WHERE servicos IS NOT NULL AND servicos <> ''"
         );
+        const contagem = new Map();
+        for (const linha of linhasServicos) {
+            for (const nome of textoParaServicos(linha.servicos)) {
+                contagem.set(nome, (contagem.get(nome) || 0) + 1);
+            }
+        }
+        const maisSolicitados = [...contagem.entries()]
+            .map(([nome, quantidade]) => ({ nome, quantidade }))
+            .sort((a, b) => b.quantidade - a.quantidade || a.nome.localeCompare(b.nome))
+            .slice(0, 2);
 
         res.json({
             totalOrdens: Number(geral.total),
             servicosMes: Number(doMes.total),
             servicosMesAnterior: Number(doMesAnterior.total),
-            servicosSolicitados: maisSolicitados.map(l => ({ nome: l.nome, quantidade: Number(l.quantidade) })),
+            servicosSolicitados: maisSolicitados,
             tempoMedioMinutos: null,
         });
     } catch (e) {
