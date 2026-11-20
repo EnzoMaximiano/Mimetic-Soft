@@ -223,7 +223,7 @@ cliente é único por CPF). Ordens antigas ficam com o funcionário que as abriu
 
 - **Nº do chassi:** o campo que antes se chamava `solicitacao` agora é `chassi` em todo o
   sistema (coluna `ordem_servico.chassi`, corpo e resposta da API, tela de OS, andamento e
-  PDF). **Banco existente:** rodar `migracao-ordens.sql` (passo 7), ou só
+  PDF). **Banco existente:** rodar
   `ALTER TABLE ordem_servico CHANGE COLUMN solicitacao chassi VARCHAR(50) NULL;`.
   O painel não usa esse campo: os "serviços mais solicitados" vêm da coluna `servicos`.
 - **Abrir uma ordem exige funcionário logado**, porque a tabela guarda quem a
@@ -231,8 +231,13 @@ cliente é único por CPF). Ordens antigas ficam com o funcionário que as abriu
   telas sem login, mas salvar uma ordem mostra "Faça login...".
 - **A placa passou a ser obrigatória ao salvar** (a coluna é `NOT NULL`). Antes só
   o CPF era obrigatório na tela; agora, sem placa, a API recusa e a tela mostra o aviso.
-- **Tempo médio do painel** continua "A calcular": o banco ainda não guarda a
-  data de conclusão. Quando existir (`concluida_em`), calcular no `GET /painel`.
+- **Tempo médio do painel (feito):** é o tempo entre o **pagamento confirmado** (`pago_em`,
+  início do serviço) e o clique em **CONCLUIR** (`concluida_em`), em média, das ordens
+  concluídas pelo funcionário **no mês atual**; o comparativo é com o mês anterior
+  (`GET /painel`: `tempoMedioSegundos`, `tempoMedioMesAnteriorSegundos`,
+  `servicosConcluidosMes`). Aparece como "4h e 35min". **Banco existente:** rodar
+  `ALTER TABLE ordem_servico ADD COLUMN pago_em DATETIME NULL, ADD COLUMN concluida_em DATETIME NULL;`. Ordens pagas ou
+  concluídas antes dessas colunas existirem não têm o horário e ficam fora da média.
 - **Ordens não são mais apagadas:** o botão CANCELAR faz `UPDATE` do status para "Cancelada" e o
   botão CONCLUIR (só em ordem paga) marca "Concluída" e etapa 4. Na tela de ordens em andamento, o botão CONFIRMAR PAGAMENTO (só em ordem aguardando
   pagamento; atalho de testes, pergunta a forma) usa `PUT /ordens/:id/pagamento`. Ela

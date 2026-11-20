@@ -1,8 +1,8 @@
 /*
   PAINEL DE GESTÃO (somente leitura).
   Os indicadores são calculados pelo banco (rota GET /painel) e refletem as
-  ordens existentes. Tempo médio segue "A calcular" até o banco guardar a
-  data de conclusão.
+  ordens do funcionário logado. O tempo médio é o tempo entre o pagamento
+  confirmado e o clique em CONCLUIR, das ordens concluídas no mês.
 */
 // Preenche o painel com os indicadores recebidos (serviços do mês, tempo médio, comparativos,
 // serviços mais solicitados e previsão de demandas). Campos ausentes em "dados" são ignorados.
@@ -56,6 +56,32 @@ function comparativoDoMes(atual, anterior, total) {
     return "Igual ao mês passado.";
 }
 
+// Escreve uma duração em segundos como "4h e 35min", "2d 3h e 10min", "12min" ou "45s".
+//userC: Vinicius Sanches
+function formatarDuracao(segundos) {
+    if (segundos < 60) return `${segundos}s`;
+    const minutosTotais = Math.round(segundos / 60);
+    const partes = [];
+    const dias = Math.floor(minutosTotais / 1440);
+    const horas = Math.floor((minutosTotais % 1440) / 60);
+    const minutos = minutosTotais % 60;
+    if (dias) partes.push(`${dias}d`);
+    if (horas) partes.push(`${horas}h`);
+    if (minutos || !partes.length) partes.push(`${minutos}min`);
+    return partes.length > 1 ? `${partes.slice(0, -1).join(" ")} e ${partes[partes.length - 1]}` : partes[0];
+}
+
+// Texto que compara o tempo médio do mês atual com o do mês anterior.
+//userC: Vinicius Sanches
+function comparativoDoTempo(atual, anterior) {
+    if (atual == null) return "Nenhum serviço concluído neste mês.";
+    if (!anterior) return "Sem serviços concluídos no mês passado para comparar.";
+    const pct = Math.round(((atual - anterior) / anterior) * 100);
+    if (pct > 0) return `${pct}% a mais que mês passado.`;
+    if (pct < 0) return `${Math.abs(pct)}% a menos que mês passado.`;
+    return "Igual ao mês passado.";
+}
+
 // Enquanto a API responde, não mostra os números de exemplo do protótipo.
 atualizarPainel({ servicosMes: "...", comparativoServicos: "Carregando...", tempoMedio: "...", comparativoTempo: "Carregando...", servicosSolicitados: ["..."], previsaoDemandas: ["..."] });
 
@@ -64,8 +90,8 @@ window.MimeticAPI.buscarPainel().then((painel) => {
     atualizarPainel({
         servicosMes: painel.servicosMes,
         comparativoServicos: comparativoDoMes(painel.servicosMes, painel.servicosMesAnterior, painel.totalOrdens),
-        tempoMedio: "A calcular",
-        comparativoTempo: "Disponível após integração com datas de início e conclusão.",
+        tempoMedio: painel.tempoMedioSegundos == null ? "Sem dados" : formatarDuracao(painel.tempoMedioSegundos),
+        comparativoTempo: comparativoDoTempo(painel.tempoMedioSegundos, painel.tempoMedioMesAnteriorSegundos),
         servicosSolicitados: nomes.length ? nomes : ["Nenhum serviço registrado"],
         previsaoDemandas: nomes.length ? nomes : ["Sem dados suficientes"]
     });

@@ -72,6 +72,8 @@ CREATE TABLE ordem_servico (
   etapa TINYINT NOT NULL DEFAULT 1,
   forma_pagamento VARCHAR(20),
   criada_em DATETIME DEFAULT CURRENT_TIMESTAMP,
+  pago_em DATETIME NULL,                  -- quando o pagamento foi confirmado (inicio do servico)
+  concluida_em DATETIME NULL,             -- quando o funcionario clicou em CONCLUIR
   FOREIGN KEY (id_cliente) REFERENCES Cliente(id_cliente),
   FOREIGN KEY (id_funcionario) REFERENCES Funcionario(id_funcionario)
 );

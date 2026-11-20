@@ -594,6 +594,7 @@ router.put('/ordens/:id', async (req, res) => {
 // de pagamento. Uma ordem já paga não pode ser paga de novo (409), o que evita
 // "voltar" uma ordem que já está em manutenção.
 // Protótipo: apenas registra o pagamento; não há cobrança real (ver telas de PIX/boleto/cartão).
+// Grava também o momento do pagamento (pago_em): é quando o serviço começa a ser feito.
 // ---------------------------------------------------------
 //USER: Vinicius Sanches
 //userC: Vinicius Sanches
@@ -615,7 +616,7 @@ router.put('/ordens/:id/pagamento', async (req, res) => {
 
         // O "AND status = ?" garante que só UM pagamento vença se dois chegarem ao mesmo tempo
         const [atualizado] = await connection.query(
-            'UPDATE ordem_servico SET status = ?, etapa = ?, forma_pagamento = ? WHERE id_ordem = ? AND status = ? AND id_funcionario = ?',
+            'UPDATE ordem_servico SET status = ?, etapa = ?, forma_pagamento = ?, pago_em = NOW() WHERE id_ordem = ? AND status = ? AND id_funcionario = ?',
             [STATUS_PAGO, 2, forma, id, STATUS_AGUARDANDO, req.funcionario.id]
         );
         if (!atualizado.affectedRows) {
@@ -633,6 +634,8 @@ router.put('/ordens/:id/pagamento', async (req, res) => {
 // CONCLUIR ORDEM DE SERVIÇO
 // Só uma ordem com o pagamento confirmado (em andamento) pode ser concluída:
 // vai para o status "Concluída" e a etapa 4. Concluída ou cancelada: 409.
+// Grava o momento da conclusão (concluida_em): o painel usa pago_em -> concluida_em
+// para calcular o tempo médio dos serviços.
 // ---------------------------------------------------------
 //userC: Vinicius Sanches
 router.put('/ordens/:id/conclusao', async (req, res) => {
@@ -654,7 +657,7 @@ router.put('/ordens/:id/conclusao', async (req, res) => {
 
         // O "AND status = ?" evita concluir duas vezes ou concluir uma ordem cancelada ao mesmo tempo
         const [atualizado] = await connection.query(
-            'UPDATE ordem_servico SET status = ?, etapa = ? WHERE id_ordem = ? AND status = ? AND id_funcionario = ?',
+            'UPDATE ordem_servico SET status = ?, etapa = ?, concluida_em = NOW() WHERE id_ordem = ? AND status = ? AND id_funcionario = ?',
             [STATUS_CONCLUIDA, ETAPA_MAX, id, STATUS_PAGO, req.funcionario.id]
         );
         if (!atualizado.affectedRows) {
@@ -717,8 +720,11 @@ function dataHoraSQL(data) {
 //   - servicosMes / servicosMesAnterior: ordens abertas no mês atual e no anterior
 //   - servicosSolicitados: os 2 SERVIÇOS mais frequentes nas ordens (contados a
 //     partir do texto da coluna "servicos", ex.: "Troca de óleo")
-//   - tempoMedioMinutos: null por enquanto (o banco ainda não guarda a data de
-//     conclusão; será calculado quando existir esse campo)
+//   - tempoMedioSegundos / tempoMedioMesAnteriorSegundos: tempo médio entre o pagamento
+//     confirmado (pago_em, início do serviço) e o clique em CONCLUIR (concluida_em), das
+//     ordens concluídas no mês atual e no anterior; null se não houver nenhuma.
+//     Ordens concluídas antes dessas colunas existirem (sem pago_em) não entram.
+//   - servicosConcluidosMes: quantas ordens entraram no cálculo do mês atual
 // ---------------------------------------------------------
 //USER: Vinicius Sanches
 //userC: Vinicius Sanches
@@ -756,12 +762,23 @@ router.get('/painel', async (req, res) => {
             .sort((a, b) => b.quantidade - a.quantidade || a.nome.localeCompare(b.nome))
             .slice(0, 2);
 
+        // Tempo médio de serviço (em segundos) das ordens CONCLUÍDAS pelo funcionário no período
+        const consultaTempo = `SELECT COUNT(*) AS total, AVG(TIMESTAMPDIFF(SECOND, pago_em, concluida_em)) AS media
+               FROM ordem_servico
+              WHERE id_funcionario = ? AND status = ? AND pago_em IS NOT NULL
+                AND concluida_em >= ? AND concluida_em < ?`;
+        const [[tempoMes]] = await connection.query(consultaTempo, [idFuncionario, STATUS_CONCLUIDA, inicioMes, inicioProximoMes]);
+        const [[tempoMesAnterior]] = await connection.query(consultaTempo, [idFuncionario, STATUS_CONCLUIDA, inicioMesAnterior, inicioMes]);
+        const segundos = linha => (Number(linha.total) ? Math.max(0, Math.round(Number(linha.media))) : null);
+
         res.json({
             totalOrdens: Number(geral.total),
             servicosMes: Number(doMes.total),
             servicosMesAnterior: Number(doMesAnterior.total),
             servicosSolicitados: maisSolicitados,
-            tempoMedioMinutos: null,
+            servicosConcluidosMes: Number(tempoMes.total),
+            tempoMedioSegundos: segundos(tempoMes),
+            tempoMedioMesAnteriorSegundos: segundos(tempoMesAnterior),
         });
     } catch (e) {
         console.error(e);
