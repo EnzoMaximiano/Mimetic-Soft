@@ -4,7 +4,7 @@
 // =========================================================
 import express from 'express';
 import { connection } from '../database/conexao.js';
-import { idValido, formatarCpf, dataISO, dataISOValida, dinheiroValido, primeiroCampoLongo } from '../utils/validacoes.js';
+import { idValido, formatarCpf, normalizarEmail, emailValido, dataISO, dataISOValida, dinheiroValido, primeiroCampoLongo } from '../utils/validacoes.js';
 import { exigirLogin } from '../utils/auth.js';
 
 const router = express.Router();
@@ -16,8 +16,8 @@ const router = express.Router();
 // linha, na coluna de TEXTO "servicos", escritos como as opções da tela
 // ("Troca de óleo, Alinhamento"). O preço de cada serviço não é guardado: o banco
 // guarda só o orçamento total (soma calculada aqui). Ver schema.sql.
-// Enquanto a API de CLIENTES não existe, os dados do cliente (nome, CPF,
-// telefone e e-mail) ficam gravados na própria ordem.
+// Os dados do cliente (nome, CPF, telefone e e-mail) ficam gravados na própria
+// ordem e, quando o CPF é novo, também viram um cliente na tabela Cliente.
 // =========================================================
 
 // Status que a ordem recebe ao ser criada e depois de paga.
@@ -143,11 +143,53 @@ function lerIdDaUrl(req, res) {
 router.use('/ordens', exigirLogin);
 router.use('/painel', exigirLogin);
 
+// Garante que o cliente da ordem exista na tabela Cliente (igual ao cadastro de cliente):
+//   - CPF já cadastrado: usa o cliente existente (os dados dele não são alterados);
+//   - CPF novo: insere nome, e-mail, telefone e CPF e usa o id novo;
+//   - sem CPF válido ou sem nome: não cria cliente (devolve null e a ordem segue sem vínculo).
+// O e-mail só é gravado no cliente se for válido e ainda não for de outro cliente
+// (na tabela Cliente o e-mail não pode se repetir); ele continua guardado na ordem.
+// Recebe a conexão da transação: se a ordem falhar, o cliente criado também é desfeito.
+//userC: Vinicius Sanches
+async function garantirCliente(conexao, { nome, cpf, telefone, email }) {
+    const cpfFormatado = formatarCpf(cpf);
+    if (!cpfFormatado) return null;
+
+    const buscarPorCpf = async () => {
+        const [achados] = await conexao.query('SELECT id_cliente FROM Cliente WHERE cpf = ?', [cpfFormatado]);
+        return achados.length ? achados[0].id_cliente : null;
+    };
+
+    const existente = await buscarPorCpf();
+    if (existente) return existente;
+    if (!nome) return null;
+
+    let emailDoCliente = normalizarEmail(email) || null;
+    if (emailDoCliente && !emailValido(emailDoCliente)) emailDoCliente = null;
+    if (emailDoCliente) {
+        const [usado] = await conexao.query('SELECT id_cliente FROM Cliente WHERE LOWER(email) = ?', [emailDoCliente]);
+        if (usado.length) emailDoCliente = null;
+    }
+
+    try {
+        const [resultado] = await conexao.query(
+            'INSERT INTO Cliente (nome, email, telefone, cpf) VALUES (?, ?, ?, ?)',
+            [nome, emailDoCliente, telefone, cpfFormatado]
+        );
+        return resultado.insertId;
+    } catch (e) {
+        // Duas ordens com o mesmo CPF novo ao mesmo tempo: a outra venceu, usa o cliente dela
+        if (e.code === 'ER_DUP_ENTRY') return await buscarPorCpf();
+        throw e;
+    }
+}
+
 // ---------------------------------------------------------
 // CRIAR ORDEM DE SERVIÇO
 // Recebe { cliente:{nome,cpf,telefone,email}, placa, veiculo,
 // anoCarro, solicitacao, previsao, servicos:[{nome,preco}] }.
 // O orçamento é SEMPRE calculado aqui, somando o preço dos serviços.
+// O cliente é cadastrado na tabela Cliente se o CPF ainda não existir (ver garantirCliente).
 // A ordem e seus itens são gravados juntos (transação): ou salva tudo ou nada.
 // O funcionário que abre a ordem é o do TOKEN de login (req.funcionario.id);
 // um idFuncionario enviado no corpo é ignorado. Responde 201 com a ordem criada.
@@ -314,24 +356,18 @@ router.post('/ordens', async (req, res) => {
         }
 
         // -----------------------------------------
-        // LIGA A ORDEM AO CLIENTE CADASTRADO
-        // Procura na tabela Cliente o CPF digitado (com ou sem máscara). Se existir,
-        // a ordem guarda o id_cliente; se não, segue sem vínculo (id_cliente NULL),
-        // como antes. As colunas cliente_* continuam guardando o que foi digitado.
-        // -----------------------------------------
-        let idDoCliente = idClienteNumero;
-        const cpfFormatado = formatarCpf(cpf);
-        if (!idDoCliente && cpfFormatado) {
-            const [achados] = await connection.query('SELECT id_cliente FROM Cliente WHERE cpf = ?', [cpfFormatado]);
-            if (achados.length) idDoCliente = achados[0].id_cliente;
-        }
-
-        // -----------------------------------------
         // CONEXÃO COM O BANCO
         // -----------------------------------------
         conexao = await connection.getConnection();
 
         await conexao.beginTransaction();
+
+        // -----------------------------------------
+        // LIGA A ORDEM AO CLIENTE (e cadastra o cliente se o CPF ainda não existir)
+        // As colunas cliente_* da ordem continuam guardando o que foi digitado.
+        // -----------------------------------------
+        const idDoCliente = idClienteNumero
+            || await garantirCliente(conexao, { nome: nomeCliente, cpf, telefone, email });
 
         // -----------------------------------------
         // INSERE A ORDEM
