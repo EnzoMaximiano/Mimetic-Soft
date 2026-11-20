@@ -81,4 +81,6 @@ app.use((erro, req, res, next) => {
 // Inicia o servidor e mostra no console em qual porta ele está escutando
 app.listen(PORT, () => {
     console.log(`Servidor MIMETIC SOFT rodando em http://localhost:${PORT}`);
+    // Mostra de qual pasta o servidor está rodando (ajuda a achar um servidor antigo esquecido aberto)
+    console.log(`Pasta do servidor: ${process.cwd()}`);
 });

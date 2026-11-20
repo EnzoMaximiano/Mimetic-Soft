@@ -107,16 +107,17 @@ function montarOrdem(linha) {
     };
 }
 
-// Busca UMA ordem completa (com os serviços) pelo id.
-// Devolve o objeto da ordem ou null quando o id não existe.
+// Busca UMA ordem completa (com os serviços) pelo id, SÓ se ela for do funcionário
+// informado: cada funcionário enxerga apenas as ordens que ele mesmo criou.
+// Devolve o objeto da ordem ou null quando o id não existe ou é de outro funcionário.
 //userC: Vinicius Sanches
-async function buscarOrdemPorId(id) {
+async function buscarOrdemPorId(id, idFuncionario) {
 
     const [linhas] = await connection.query(
         `SELECT ${COLUNAS_ORDEM}
          FROM ordem_servico o
-         WHERE o.id_ordem = ?`,
-        [id]
+         WHERE o.id_ordem = ? AND o.id_funcionario = ?`,
+        [id, idFuncionario]
     );
 
     if (linhas.length === 0) {
@@ -382,7 +383,7 @@ router.post('/ordens', async (req, res) => {
         // -----------------------------------------
         // RETORNA A ORDEM CRIADA
         // -----------------------------------------
-        const ordem = await buscarOrdemPorId(idOrdem);
+        const ordem = await buscarOrdemPorId(idOrdem, idFuncionarioNumero);
 
         res.status(201).json(ordem);
 
@@ -429,8 +430,9 @@ try {
         req.query.cpf ?? ''
     ).trim();
 
-    const condicoes = [];
-    const parametros = [];
+    // Só as ordens do funcionário logado (nunca as de outros funcionários)
+    const condicoes = ['o.id_funcionario = ?'];
+    const parametros = [req.funcionario.id];
 
     if (placa) {
         condicoes.push('UPPER(o.placa) = ?');
@@ -440,9 +442,7 @@ try {
         condicoes.push('o.cliente_cpf = ?');
         parametros.push(cpf);
     }
-    const filtro = condicoes.length
-        ? `WHERE ${condicoes.join(' AND ')}`
-        : '';
+    const filtro = `WHERE ${condicoes.join(' AND ')}`;
     const [linhas] = await connection.query(
         `SELECT ${COLUNAS_ORDEM}
          FROM ordem_servico o
@@ -476,7 +476,7 @@ router.get('/ordens/:id', async (req, res) => {
         const id = lerIdDaUrl(req, res);
         if (!id) return;
 
-        const ordem = await buscarOrdemPorId(id);
+        const ordem = await buscarOrdemPorId(id, req.funcionario.id);
         if (!ordem) return res.status(404).json({ erro: 'Ordem de serviço não encontrada.' });
 
         res.json(ordem);
@@ -530,15 +530,15 @@ router.put('/ordens/:id', async (req, res) => {
             return res.status(400).json({ erro: 'Informe status, etapa ou previsao para atualizar.' });
         }
 
-        const ordemExiste = await buscarOrdemPorId(id);
+        const ordemExiste = await buscarOrdemPorId(id, req.funcionario.id);
         if (!ordemExiste) return res.status(404).json({ erro: 'Ordem de serviço não encontrada.' });
 
         await connection.query(
-            `UPDATE ordem_servico SET ${campos.join(', ')} WHERE id_ordem = ? `,
-            [...valores, id]
+            `UPDATE ordem_servico SET ${campos.join(', ')} WHERE id_ordem = ? AND id_funcionario = ?`,
+            [...valores, id, req.funcionario.id]
         );
 
-        res.json(await buscarOrdemPorId(id));
+        res.json(await buscarOrdemPorId(id, req.funcionario.id));
     } catch (e) {
         console.error(e);
         res.status(500).json({ erro: 'Erro ao atualizar a ordem de serviço.' });
@@ -565,7 +565,7 @@ router.put('/ordens/:id/pagamento', async (req, res) => {
             return res.status(400).json({ erro: `Forma de pagamento inválida. Use: ${FORMAS_PAGAMENTO.join(', ')}.` });
         }
 
-        const ordem = await buscarOrdemPorId(id);
+        const ordem = await buscarOrdemPorId(id, req.funcionario.id);
         if (!ordem) return res.status(404).json({ erro: 'Ordem de serviço não encontrada.' });
         if (ordem.status !== STATUS_AGUARDANDO) {
             return res.status(409).json({ erro: 'Esta ordem de serviço já teve o pagamento confirmado.' });
@@ -573,14 +573,14 @@ router.put('/ordens/:id/pagamento', async (req, res) => {
 
         // O "AND status = ?" garante que só UM pagamento vença se dois chegarem ao mesmo tempo
         const [atualizado] = await connection.query(
-            'UPDATE ordem_servico SET status = ?, etapa = ?, forma_pagamento = ? WHERE id_ordem = ? AND status = ?',
-            [STATUS_PAGO, 2, forma, id, STATUS_AGUARDANDO]
+            'UPDATE ordem_servico SET status = ?, etapa = ?, forma_pagamento = ? WHERE id_ordem = ? AND status = ? AND id_funcionario = ?',
+            [STATUS_PAGO, 2, forma, id, STATUS_AGUARDANDO, req.funcionario.id]
         );
         if (!atualizado.affectedRows) {
             return res.status(409).json({ erro: 'Esta ordem de serviço já teve o pagamento confirmado.' });
         }
 
-        res.json(await buscarOrdemPorId(id));
+        res.json(await buscarOrdemPorId(id, req.funcionario.id));
     } catch (e) {
         console.error(e);
         res.status(500).json({ erro: 'Erro ao confirmar o pagamento.' });
@@ -601,8 +601,8 @@ router.delete('/ordens/:id', async (req, res) => {
         if (!id) return;
 
         const [resultado] = await connection.query(
-            'DELETE FROM ordem_servico WHERE id_ordem = ?',
-            [id]
+            'DELETE FROM ordem_servico WHERE id_ordem = ? AND id_funcionario = ?',
+            [id, req.funcionario.id]
         );
 
         // Nenhuma linha afetada = o id informado não existe
@@ -643,18 +643,21 @@ router.get('/painel', async (req, res) => {
         const inicioMes = dataHoraSQL(new Date(agora.getFullYear(), agora.getMonth(), 1));
         const inicioProximoMes = dataHoraSQL(new Date(agora.getFullYear(), agora.getMonth() + 1, 1));
 
+        // Os números são só das ordens do funcionário logado
+        const idFuncionario = req.funcionario.id;
         const [[doMes]] = await connection.query(
-            'SELECT COUNT(*) AS total FROM ordem_servico WHERE criada_em >= ? AND criada_em < ?',
-            [inicioMes, inicioProximoMes]
+            'SELECT COUNT(*) AS total FROM ordem_servico WHERE id_funcionario = ? AND criada_em >= ? AND criada_em < ?',
+            [idFuncionario, inicioMes, inicioProximoMes]
         );
         const [[doMesAnterior]] = await connection.query(
-            'SELECT COUNT(*) AS total FROM ordem_servico WHERE criada_em >= ? AND criada_em < ?',
-            [inicioMesAnterior, inicioMes]
+            'SELECT COUNT(*) AS total FROM ordem_servico WHERE id_funcionario = ? AND criada_em >= ? AND criada_em < ?',
+            [idFuncionario, inicioMesAnterior, inicioMes]
         );
-        const [[geral]] = await connection.query('SELECT COUNT(*) AS total FROM ordem_servico');
+        const [[geral]] = await connection.query('SELECT COUNT(*) AS total FROM ordem_servico WHERE id_funcionario = ?', [idFuncionario]);
         // Conta quantas vezes cada serviço aparece nos textos da coluna "servicos"
         const [linhasServicos] = await connection.query(
-            "SELECT servicos FROM ordem_servico WHERE servicos IS NOT NULL AND servicos <> ''"
+            "SELECT servicos FROM ordem_servico WHERE id_funcionario = ? AND servicos IS NOT NULL AND servicos <> ''",
+            [idFuncionario]
         );
         const contagem = new Map();
         for (const linha of linhasServicos) {
