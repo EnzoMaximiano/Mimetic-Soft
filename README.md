@@ -190,10 +190,20 @@ Campos: `nome`, `cpf` (11 números, guardado como `000.000.000-00`), `telefone`,
 - A validação do CPF confere só o formato (11 números), não os dígitos verificadores.
 
 **Ordem ligada ao cliente:** ao criar uma ordem (`POST /ordens`), o servidor procura
-o CPF na tabela `Cliente` (com ou sem máscara). Achando, grava o `id_cliente` na
-ordem; não achando, a ordem é salva do mesmo jeito, com `id_cliente` vazio. As
-colunas `cliente_*` continuam guardando o que foi digitado. Por isso, depois de
-ligada, a ordem de um cliente passa a impedir que ele seja apagado (409).
+o CPF na tabela `Cliente` (com ou sem máscara):
+
+- **CPF já cadastrado:** a ordem usa o `id_cliente` dele (os dados do cliente não mudam).
+- **CPF novo:** o servidor **cadastra o cliente** (nome, e-mail, telefone e CPF) na tabela
+  `Cliente`, como a tela de cadastro de cliente, e liga a ordem a ele. Isso acontece na
+  mesma transação da ordem: se a ordem falhar, o cliente também não é criado.
+- **E-mail** que já pertence a outro cliente (ou inválido): o cliente é criado sem
+  e-mail, e a ordem continua guardando o e-mail digitado.
+- **Sem nome ou com CPF fora do formato:** a ordem é salva do mesmo jeito, sem cliente
+  (`id_cliente` vazio).
+
+As colunas `cliente_*` da ordem continuam guardando o que foi digitado. Depois de ligada,
+a ordem de um cliente passa a impedir que ele seja apagado (409). A data de nascimento
+fica vazia (a tela de OS não pede).
 
 #### Cada funcionário vê só as suas ordens
 
