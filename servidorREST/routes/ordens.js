@@ -23,6 +23,9 @@ const router = express.Router();
 // Status que a ordem recebe ao ser criada e depois de paga.
 const STATUS_AGUARDANDO = 'Aguardando pagamento';
 const STATUS_PAGO = 'Pagamento confirmado';
+// Status finais: a ordem concluída ou cancelada não muda mais (nada é apagado do banco).
+const STATUS_CONCLUIDA = 'Concluída';
+const STATUS_CANCELADA = 'Cancelada';
 
 // Formas de pagamento aceitas pela tela de pagamento.
 const FORMAS_PAGAMENTO = ['PIX', 'BOLETO', 'CARTÃO', 'DÉBITO', 'CRÉDITO'];
@@ -532,6 +535,9 @@ router.put('/ordens/:id', async (req, res) => {
 
         const ordemExiste = await buscarOrdemPorId(id, req.funcionario.id);
         if (!ordemExiste) return res.status(404).json({ erro: 'Ordem de serviço não encontrada.' });
+        if (ordemExiste.status === STATUS_CONCLUIDA || ordemExiste.status === STATUS_CANCELADA) {
+            return res.status(409).json({ erro: `Esta ordem de serviço está ${ordemExiste.status.toLowerCase()} e não pode ser alterada.` });
+        }
 
         await connection.query(
             `UPDATE ordem_servico SET ${campos.join(', ')} WHERE id_ordem = ? AND id_funcionario = ?`,
@@ -588,32 +594,76 @@ router.put('/ordens/:id/pagamento', async (req, res) => {
 });
 
 // ---------------------------------------------------------
-// REMOVER ORDEM DE SERVIÇO
-// Apaga a ordem; os serviços dela vão junto, pois ficam na coluna "servicos" da
-// própria linha. (TRATATIVA MANTIDA PORQUE A TELA TEM O BOTÃO "APAGAR"; em
-// produção o ideal é marcar como cancelada em vez de apagar dados do banco.)
+// CONCLUIR ORDEM DE SERVIÇO
+// Só uma ordem com o pagamento confirmado (em andamento) pode ser concluída:
+// vai para o status "Concluída" e a etapa 4. Concluída ou cancelada: 409.
 // ---------------------------------------------------------
-//USER: Vinicius Sanches
 //userC: Vinicius Sanches
-router.delete('/ordens/:id', async (req, res) => {
+router.put('/ordens/:id/conclusao', async (req, res) => {
     try {
         const id = lerIdDaUrl(req, res);
         if (!id) return;
 
-        const [resultado] = await connection.query(
-            'DELETE FROM ordem_servico WHERE id_ordem = ? AND id_funcionario = ?',
-            [id, req.funcionario.id]
-        );
-
-        // Nenhuma linha afetada = o id informado não existe
-        if (!resultado.affectedRows) {
-            return res.status(404).json({ erro: 'Ordem de serviço não encontrada.' });
+        const ordem = await buscarOrdemPorId(id, req.funcionario.id);
+        if (!ordem) return res.status(404).json({ erro: 'Ordem de serviço não encontrada.' });
+        if (ordem.status === STATUS_CONCLUIDA) {
+            return res.status(409).json({ erro: 'Esta ordem de serviço já foi concluída.' });
+        }
+        if (ordem.status === STATUS_CANCELADA) {
+            return res.status(409).json({ erro: 'Esta ordem de serviço foi cancelada e não pode ser concluída.' });
+        }
+        if (ordem.status !== STATUS_PAGO) {
+            return res.status(409).json({ erro: 'Confirme o pagamento antes de concluir o serviço.' });
         }
 
-        res.json({ mensagem: 'Deletado com sucesso' });
+        // O "AND status = ?" evita concluir duas vezes ou concluir uma ordem cancelada ao mesmo tempo
+        const [atualizado] = await connection.query(
+            'UPDATE ordem_servico SET status = ?, etapa = ? WHERE id_ordem = ? AND status = ? AND id_funcionario = ?',
+            [STATUS_CONCLUIDA, ETAPA_MAX, id, STATUS_PAGO, req.funcionario.id]
+        );
+        if (!atualizado.affectedRows) {
+            return res.status(409).json({ erro: 'Esta ordem de serviço mudou de situação. Atualize a tela.' });
+        }
+
+        res.json(await buscarOrdemPorId(id, req.funcionario.id));
     } catch (e) {
         console.error(e);
-        res.status(500).json({ erro: 'Erro ao remover a ordem de serviço.' });
+        res.status(500).json({ erro: 'Erro ao concluir a ordem de serviço.' });
+    }
+});
+
+// ---------------------------------------------------------
+// CANCELAR ORDEM DE SERVIÇO
+// A ordem NÃO é apagada do banco: só recebe o status "Cancelada" (UPDATE).
+// Ordem concluída ou já cancelada não pode ser cancelada (409).
+// ---------------------------------------------------------
+//userC: Vinicius Sanches
+router.put('/ordens/:id/cancelamento', async (req, res) => {
+    try {
+        const id = lerIdDaUrl(req, res);
+        if (!id) return;
+
+        const ordem = await buscarOrdemPorId(id, req.funcionario.id);
+        if (!ordem) return res.status(404).json({ erro: 'Ordem de serviço não encontrada.' });
+        if (ordem.status === STATUS_CANCELADA) {
+            return res.status(409).json({ erro: 'Esta ordem de serviço já está cancelada.' });
+        }
+        if (ordem.status === STATUS_CONCLUIDA) {
+            return res.status(409).json({ erro: 'Esta ordem de serviço já foi concluída e não pode ser cancelada.' });
+        }
+
+        const [atualizado] = await connection.query(
+            'UPDATE ordem_servico SET status = ? WHERE id_ordem = ? AND status NOT IN (?, ?) AND id_funcionario = ?',
+            [STATUS_CANCELADA, id, STATUS_CANCELADA, STATUS_CONCLUIDA, req.funcionario.id]
+        );
+        if (!atualizado.affectedRows) {
+            return res.status(409).json({ erro: 'Esta ordem de serviço mudou de situação. Atualize a tela.' });
+        }
+
+        res.json(await buscarOrdemPorId(id, req.funcionario.id));
+    } catch (e) {
+        console.error(e);
+        res.status(500).json({ erro: 'Erro ao cancelar a ordem de serviço.' });
     }
 });
 
@@ -643,21 +693,21 @@ router.get('/painel', async (req, res) => {
         const inicioMes = dataHoraSQL(new Date(agora.getFullYear(), agora.getMonth(), 1));
         const inicioProximoMes = dataHoraSQL(new Date(agora.getFullYear(), agora.getMonth() + 1, 1));
 
-        // Os números são só das ordens do funcionário logado
+        // Os números são só das ordens do funcionário logado, sem contar as canceladas
         const idFuncionario = req.funcionario.id;
         const [[doMes]] = await connection.query(
-            'SELECT COUNT(*) AS total FROM ordem_servico WHERE id_funcionario = ? AND criada_em >= ? AND criada_em < ?',
-            [idFuncionario, inicioMes, inicioProximoMes]
+            'SELECT COUNT(*) AS total FROM ordem_servico WHERE id_funcionario = ? AND status <> ? AND criada_em >= ? AND criada_em < ?',
+            [idFuncionario, STATUS_CANCELADA, inicioMes, inicioProximoMes]
         );
         const [[doMesAnterior]] = await connection.query(
-            'SELECT COUNT(*) AS total FROM ordem_servico WHERE id_funcionario = ? AND criada_em >= ? AND criada_em < ?',
-            [idFuncionario, inicioMesAnterior, inicioMes]
+            'SELECT COUNT(*) AS total FROM ordem_servico WHERE id_funcionario = ? AND status <> ? AND criada_em >= ? AND criada_em < ?',
+            [idFuncionario, STATUS_CANCELADA, inicioMesAnterior, inicioMes]
         );
-        const [[geral]] = await connection.query('SELECT COUNT(*) AS total FROM ordem_servico WHERE id_funcionario = ?', [idFuncionario]);
+        const [[geral]] = await connection.query('SELECT COUNT(*) AS total FROM ordem_servico WHERE id_funcionario = ? AND status <> ?', [idFuncionario, STATUS_CANCELADA]);
         // Conta quantas vezes cada serviço aparece nos textos da coluna "servicos"
         const [linhasServicos] = await connection.query(
-            "SELECT servicos FROM ordem_servico WHERE id_funcionario = ? AND servicos IS NOT NULL AND servicos <> ''",
-            [idFuncionario]
+            "SELECT servicos FROM ordem_servico WHERE id_funcionario = ? AND status <> ? AND servicos IS NOT NULL AND servicos <> ''",
+            [idFuncionario, STATUS_CANCELADA]
         );
         const contagem = new Map();
         for (const linha of linhasServicos) {
