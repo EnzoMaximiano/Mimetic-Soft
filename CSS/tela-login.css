@@ -247,6 +247,11 @@ header {
     display: flex;
     justify-content: space-between;
 }
+/* linha da caixa "Mostrar senha": afasta a linha de baixo ("Manter conectado") */
+.esqueciSenha.linha-mostrar-senha {
+    margin-bottom: 26px;
+}
+
 /* cor e tamanho checkbox */
 .esqueciSenha label input {
     accent-color: white;
@@ -303,4 +308,4 @@ header {
 /* quando colocar mouse em cima aparecer linha em 'registrar'*/
 .login-register p a:hover {
     text-decoration: underline;
-}
+}

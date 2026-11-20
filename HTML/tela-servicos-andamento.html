@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Serviços em Andamento | MIMETIC SOFT</title>
-    <link rel="stylesheet" href="../CSS/tela-servicos-andamento.css">
+    <link rel="stylesheet" href="../CSS/tela-servicos-andamento.css?v=3">
     <link rel="stylesheet" href="../CSS/cabecalho-padrao.css">
     <link rel="stylesheet" href="../CSS/botoes-padrao.css">
     <link rel="stylesheet" href="../CSS/responsividade-global.css">
@@ -40,6 +40,20 @@
                     <!-- As ordens serão inseridas aqui pelo JavaScript/backend. -->
                 </div>
             </div>
+
+            <!--
+              BOTÕES DE CADA ORDEM (modelo copiado pelo JavaScript para cada linha da tabela).
+              data-aparece-em: o botão só aparece quando o status da ordem é um destes
+              (separados por "|"). Sem esse atributo, aparece sempre.
+              Os ids das ordens são colocados pelo JavaScript.
+            -->
+            <template id="modelo-botoes-ordem">
+                <button type="button" class="botao-pdf-registro" data-acao="pdf" title="Gerar PDF desta ordem de serviço">GERAR PDF</button>
+                <button type="button" class="botao-pagar-registro" data-acao="confirmar-pagamento" data-aparece-em="Aguardando pagamento" title="Confirmar o pagamento desta ordem">CONFIRMAR PAGAMENTO</button>
+                <button type="button" class="botao-concluir-registro" data-acao="concluir" data-aparece-em="Pagamento confirmado" title="Concluir o serviço desta ordem">CONCLUIR</button>
+                <button type="button" class="botao-cancelar-registro" data-acao="cancelar" title="Cancelar esta ordem de serviço">CANCELAR</button>
+            </template>
+
             <button class="botao-voltar" id="botao-voltar" type="button">VOLTAR</button>
         </section>
     </main>
@@ -47,7 +61,7 @@
     <script src="../JAVASCRIPT/api-client.js"></script>
     <script src="../JAVASCRIPT/tela-comum.js"></script>
     <script src="../JAVASCRIPT/pdf-ordem-servico.js"></script>
-    <script src="../JAVASCRIPT/tela-servicos-andamento.js"></script>
+    <script src="../JAVASCRIPT/tela-servicos-andamento.js?v=3"></script>
     <script src="../JAVASCRIPT/app-core.js"></script>
 </body>
 </html>

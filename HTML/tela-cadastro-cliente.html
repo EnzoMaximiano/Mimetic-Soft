@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="../CSS/tela-cadastro-cliente.css">
     <link rel="stylesheet" href="../CSS/cabecalho-padrao.css">
     <link rel="stylesheet" href="../CSS/botoes-padrao.css">
-    <link rel="stylesheet" href="../CSS/senha-visivel.css">
     <link rel="stylesheet" href="../CSS/responsividade-global.css">
     <!--TELA CRIADA POR: MATHEUS LINO-->
 </head>
@@ -50,26 +49,6 @@
                     <input id="email" name="email" type="email" autocomplete="off" required>
                 </div>
 
-                <div class="grupo-campo">
-                    <label for="senha">Senha: <span class="asterisco">*</span><span class="erro-texto">Campo obrigatório</span></label>
-                    <input id="senha" name="senha" type="password" autocomplete="new-password" required>
-                </div>
-
-                <div class="grupo-campo">
-                    <label for="repetir-senha">Repetir senha: <span class="asterisco">*</span><span class="erro-texto">Campo obrigatório</span></label>
-                    <input id="repetir-senha" name="repetirSenha" type="password" autocomplete="new-password" required>
-                    <span class="erro-senha" id="erro-senha">As senhas não coincidem.</span>
-                </div>
-
-                <div class="requisitos-senha" aria-live="polite">
-                    <strong>SUA SENHA DEVE CONTER:</strong>
-                    <span id="req-tamanho" class="invalido">✕ 8 caracteres ou mais</span>
-                    <span id="req-maiuscula" class="invalido">✕ 1 letra maiúscula</span>
-                    <span id="req-minuscula" class="invalido">✕ 1 letra minúscula</span>
-                    <span id="req-numero" class="invalido">✕ 1 número</span>
-                    <span id="req-simbolo" class="invalido">✕ 1 símbolo (ex.: @, #, !, $)</span>
-                </div>
-
                 <div class="acoes">
                     <button class="botao-confirmar" type="submit">CONFIRMAR</button>
                     <button class="botao-voltar" id="botao-voltar" type="button">VOLTAR</button>
@@ -82,6 +61,5 @@
     <script src="../JAVASCRIPT/tela-comum.js"></script>
     <script src="../JAVASCRIPT/tela-cadastro-cliente.js"></script>
 <script src="../JAVASCRIPT/app-core.js"></script>
-    <script src="../JAVASCRIPT/senha-visivel.js"></script>
 </body>
 </html>

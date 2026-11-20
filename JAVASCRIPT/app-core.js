@@ -4,7 +4,7 @@
      - proteção de telas (sessão), nome do funcionário no cabeçalho
      - menu da conta / "Sair"
      - botão VOLTAR (destino fixo de cada tela)
-     - botão APAGAR de uma ordem (usado em duas telas)
+     - botões CONFIRMAR PAGAMENTO, CONCLUIR e CANCELAR de uma ordem (usados em duas telas)
    O que é de uma tela só fica no próprio tela-xxx.js.
    Funções repetidas entre telas: tela-comum.js. Chamadas HTTP: api-client.js.
 
@@ -85,18 +85,48 @@ const DESTINO_VOLTAR = {
     go('tela-login.html');
   }
 
-  // Pergunta e, se confirmado, apaga UMA ordem (pelo id) via API e recarrega a tela.
-  // Se a ordem já não existir (404), apenas recarrega.
+  // Pergunta e, se confirmado, cancela UMA ordem (pelo id) via API e recarrega a tela.
+  // A ordem não é apagada: fica no banco com o status "Cancelada".
   //USER: Matheus Lino
   //userC: Vinicius Sanches
-  async function apagarOrdem(id) {
-    if (!id || !window.confirm('Deseja apagar somente esta informação?')) return;
+  async function cancelarOrdem(id) {
+    if (!id || !window.confirm('Deseja cancelar esta ordem de serviço?')) return;
     try {
-      await window.MimeticAPI.apagarOrdem(id);
+      await window.MimeticAPI.cancelarOrdem(id);
     } catch (erro) {
-      if (erro.status !== 404) { alert(erro.message); return; }
+      alert(erro.message);
+      if (erro.status !== 409) return;
     }
     if (localStorage.getItem('mimeticOrdemAtual') === String(id)) localStorage.removeItem('mimeticOrdemAtual');
+    location.reload();
+  }
+
+  // Confirma o pagamento de UMA ordem direto da lista (atalho para testes, sem passar pelas
+  // telas de PIX/boleto/cartão). Pergunta a forma de pagamento e recarrega a tela.
+  //userC: Vinicius Sanches
+  async function confirmarPagamento(id) {
+    if (!id) return;
+    const resposta = window.prompt('Forma de pagamento (PIX, BOLETO, CARTÃO, DÉBITO ou CRÉDITO):', 'PIX');
+    if (resposta === null) return;
+    try {
+      await window.MimeticAPI.pagarOrdem(id, resposta.trim().toUpperCase());
+    } catch (erro) {
+      alert(erro.message);
+      if (erro.status !== 409) return;
+    }
+    location.reload();
+  }
+
+  // Pergunta e, se confirmado, conclui o serviço de UMA ordem (pelo id) e recarrega a tela.
+  //userC: Vinicius Sanches
+  async function concluirOrdem(id) {
+    if (!id || !window.confirm('Deseja concluir o serviço desta ordem?')) return;
+    try {
+      await window.MimeticAPI.concluirOrdem(id);
+    } catch (erro) {
+      alert(erro.message);
+      if (erro.status !== 409) return;
+    }
     location.reload();
   }
 
@@ -118,9 +148,15 @@ const DESTINO_VOLTAR = {
       menuConta.style.top = (r.bottom + 8) + 'px';
       menuConta.style.left = Math.max(8, r.right - 120) + 'px';
       menuConta.hidden = !menuConta.hidden;
-    } else if (t.dataset.apagarOrdem) {
+    } else if (t.dataset.cancelarOrdem) {
       e.preventDefault(); e.stopImmediatePropagation();
-      apagarOrdem(t.dataset.apagarOrdem);
+      cancelarOrdem(t.dataset.cancelarOrdem);
+    } else if (t.dataset.confirmarPagamento) {
+      e.preventDefault(); e.stopImmediatePropagation();
+      confirmarPagamento(t.dataset.confirmarPagamento);
+    } else if (t.dataset.concluirOrdem) {
+      e.preventDefault(); e.stopImmediatePropagation();
+      concluirOrdem(t.dataset.concluirOrdem);
     } else if (t.dataset.conta === 'sair') {
       e.preventDefault(); e.stopImmediatePropagation();
       sairDoSistema();

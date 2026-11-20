@@ -844,11 +844,13 @@ body {
     align-items: center;
     justify-content: center;
     gap: 6px;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
 }
 
 .botao-pdf-registro,
-.botao-apagar-registro {
+.botao-pagar-registro,
+.botao-concluir-registro,
+.botao-cancelar-registro {
     min-width: 0;
     padding: 7px 10px;
     border-radius: 7px;
@@ -856,6 +858,15 @@ body {
     font-weight: 700;
     cursor: pointer;
     white-space: nowrap;
+    /* Texto sempre centralizado e inteiro dentro do botão: o botão nunca é espremido
+       (quando falta espaço, ele vai para a linha de baixo). */
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    line-height: 1.2;
+    box-sizing: border-box;
 }
 
 .botao-pdf-registro {
@@ -869,16 +880,73 @@ body {
     background: #8dca75;
 }
 
-.botao-apagar-registro {
+/* CONFIRMAR PAGAMENTO: botão azul em destaque, com ícone de check, sombra e efeito ao passar o mouse. */
+.botao-pagar-registro {
+    gap: 5px;
+    border: 1px solid #0d47a1;
+    border-radius: 999px;
+    background: linear-gradient(180deg, #1e88e5 0%, #1565c0 100%);
+    color: #fff;
+    letter-spacing: .4px;
+    box-shadow: 0 2px 5px rgba(21, 101, 192, .35);
+    transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+}
+
+.botao-pagar-registro::before {
+    content: "\2713";
+    font-size: 12px;
+    line-height: 1;
+}
+
+.botao-pagar-registro:hover,
+.botao-pagar-registro:focus-visible {
+    background: linear-gradient(180deg, #1976d2 0%, #0d47a1 100%);
+    box-shadow: 0 4px 10px rgba(21, 101, 192, .45);
+    transform: translateY(-1px);
+}
+
+.botao-pagar-registro:focus-visible {
+    outline: 2px solid #90caf9;
+    outline-offset: 2px;
+}
+
+.botao-pagar-registro:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 3px rgba(21, 101, 192, .4);
+}
+
+.botao-concluir-registro {
+    border: 1px solid #2e7d32;
+    background: #2e7d32;
+    color: #fff;
+}
+
+.botao-concluir-registro:hover,
+.botao-concluir-registro:focus-visible {
+    background: #1b5e20;
+}
+
+.botao-cancelar-registro {
     border: 1px solid var(--cor-vermelho);
     background: transparent;
     color: var(--cor-vermelho);
 }
 
-.botao-apagar-registro:hover,
-.botao-apagar-registro:focus-visible {
+.botao-cancelar-registro:hover,
+.botao-cancelar-registro:focus-visible {
     background: var(--cor-vermelho);
     color: #fff;
+}
+
+/* Na tabela, os três botões têm o mesmo tamanho (sobrepõe o estilo geral de botoes-padrao.css). */
+.acoes-registro .botao-cancelar-registro {
+    margin: 0;
+    min-width: 0;
+    min-height: 0;
+    border-width: 1px;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 7px 10px;
 }
 
 @media (max-width: 700px) {
@@ -985,7 +1053,9 @@ body {
     }
 
     .botao-pdf-registro,
-    .botao-apagar-registro {
+    .botao-pagar-registro,
+    .botao-concluir-registro,
+    .botao-cancelar-registro {
         padding: 6px 8px;
         font-size: 10px;
     }

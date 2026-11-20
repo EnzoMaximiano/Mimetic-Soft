@@ -131,3 +131,14 @@ async function registrar(evento) {
 
 formLogin.addEventListener('submit', logar);
 formRegistro.addEventListener('submit', registrar);
+
+// ---------------------------------------------------------
+// MOSTRAR SENHA: a caixa "Mostrar senha" alterna o campo entre texto e senha
+// ---------------------------------------------------------
+//userC: Vinicius Sanches
+document.querySelectorAll('.mostrar-senha').forEach((caixa) => {
+    caixa.addEventListener('change', () => {
+        const campo = document.getElementById(caixa.dataset.campo);
+        if (campo) campo.type = caixa.checked ? 'text' : 'password';
+    });
+});

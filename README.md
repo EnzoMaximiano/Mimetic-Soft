@@ -103,10 +103,7 @@ Isso foi conferido no navegador: ao cadastrar um cliente, a lista de funcionári
 não muda, quem está logado continua sendo o funcionário, e as credenciais do
 cliente **não** dão acesso ao sistema.
 
-**Decisão pendente do grupo:** o formulário de cliente ainda pede **senha**, mas
-cliente não faz login. Ou o cliente vai ter um portal próprio no futuro (então
-precisa de login separado), ou os campos de senha devem sair do formulário.
-Não removi nada da tela para não decidir isso por vocês.
+O formulário de cliente **não tem campo de senha** (cliente não faz login).
 
 ---
 
@@ -129,7 +126,8 @@ Rotas atuais (todas tratam **apenas funcionários**):
 | GET | `/ordens/:id` | Busca uma ordem (usada pela "ordem atual" nas telas de pagamento e acompanhamento) |
 | PUT | `/ordens/:id` | Atualiza `status`, `etapa` (1 a 4) e/ou `previsao`. **Ainda sem tela**; pronta para o fluxo do mecânico |
 | PUT | `/ordens/:id/pagamento` | `{ forma }` (PIX, BOLETO, CARTÃO, DÉBITO, CRÉDITO): marca "Pagamento confirmado" e etapa 2. Ordem já paga -> 409 |
-| DELETE | `/ordens/:id` | Remove a ordem e os serviços dela |
+| PUT | `/ordens/:id/conclusao` | Conclui o serviço: status "Concluída" e etapa 4. Só ordem com pagamento confirmado; concluída/cancelada/sem pagamento -> 409 |
+| PUT | `/ordens/:id/cancelamento` | Cancela a ordem: `UPDATE` do status para "Cancelada" (**nada é apagado do banco**). Concluída ou já cancelada -> 409 |
 | GET | `/painel` | Indicadores calculados no banco: ordens do mês e do mês anterior, 2 serviços mais pedidos |
 
 ---
@@ -150,7 +148,7 @@ Rotas atuais (todas tratam **apenas funcionários**):
 
 | Dado | Situação | Onde ficou |
 |---|---|---|
-| **Ordens de serviço** (criar, listar em andamento, histórico por placa, apagar) | **Feito (API)** | `routes/ordens.js`, `tela-ordem-servico.js`, `tela-servicos-andamento.js`, `tela-historico-veiculo.js`, `app-core.js` (apagar), `api-client.js` |
+| **Ordens de serviço** (criar, listar em andamento, histórico por placa, concluir, cancelar) | **Feito (API)** | `routes/ordens.js`, `tela-ordem-servico.js`, `tela-servicos-andamento.js`, `tela-historico-veiculo.js`, `app-core.js` (concluir/cancelar), `api-client.js` |
 | **Ordem atual** | **Feito (API)**. O `localStorage` guarda só o **id** (`mimeticOrdemAtual`); os dados vêm de `GET /ordens/:id` | `tela-pagamento.js`, `tela-pagamento-pix.js`, `tela-boleto.js`, `tela-cartao.js`, `tela-acompanhamento.js` |
 | **Pagamento** (status/etapa) | **Feito (API)** | `PUT /ordens/:id/pagamento`, `finalizarPagamento` em `tela-comum.js` |
 | **Painel de gestão** | **Feito (API)**, calculado no banco | `GET /painel`, `tela-painel-gestao.js` |
@@ -174,8 +172,7 @@ salvar uma ordem, ela passou a guardar os dados do cliente nela mesma:
   tela, separados por vírgula (ex.: `Troca de óleo, Alinhamento`). Não existe tabela
   separada de itens. O **preço de cada serviço não é guardado**: o banco guarda só o
   orçamento total (`orcamento`), somado pela API. Vírgulas digitadas em "Outro serviço"
-  viram espaço. Apagar a ordem apaga os serviços junto, e o painel conta os nomes a
-  partir desse texto. A API devolve `servicos` como lista de nomes. O PDF de uma ordem
+  viram espaço. O painel conta os nomes a partir desse texto (sem contar ordens canceladas). A API devolve `servicos` como lista de nomes. O PDF de uma ordem
   já salva mostra os nomes e o total, sem valor por item.
 - Aplicar em banco existente: `servidorREST/migracao-ordens.sql`.
 
@@ -189,8 +186,7 @@ Campos: `nome`, `cpf` (11 números, guardado como `000.000.000-00`), `telefone`,
 - CPF ou e-mail repetido responde **409** (antes, a tela atualizava o cliente
   em silêncio). Apagar cliente que já tem ordens ou agendamentos também dá 409.
 - **Banco existente:** rodar `migracao-ordens.sql` (cria `Cliente.data_nascimento`).
-- **A senha digitada no formulário NÃO é enviada:** a tabela `Cliente` não tem senha
-  e cliente não faz login. Falta o grupo decidir se os campos de senha saem da tela.
+- O formulário de cliente não pede senha: a tabela `Cliente` não tem senha e cliente não faz login.
 - A validação do CPF confere só o formato (11 números), não os dígitos verificadores.
 
 **Ordem ligada ao cliente:** ao criar uma ordem (`POST /ordens`), o servidor procura
@@ -198,6 +194,20 @@ o CPF na tabela `Cliente` (com ou sem máscara). Achando, grava o `id_cliente` n
 ordem; não achando, a ordem é salva do mesmo jeito, com `id_cliente` vazio. As
 colunas `cliente_*` continuam guardando o que foi digitado. Por isso, depois de
 ligada, a ordem de um cliente passa a impedir que ele seja apagado (409).
+
+#### Cada funcionário vê só as suas ordens
+
+Toda ordem guarda o funcionário que a criou (`id_funcionario`, vindo do token de
+login). Todas as rotas de `/ordens` e o `/painel` filtram por esse funcionário:
+
+- listar (inclusive as buscas por placa e CPF), abrir, editar, pagar, concluir e cancelar só
+  funcionam nas **próprias** ordens;
+- a ordem de outro funcionário responde **404** (como se não existisse);
+- os números do painel de gestão também são só das ordens do funcionário logado;
+- o `idFuncionario` enviado no corpo de uma ordem é ignorado.
+
+Os **clientes** continuam compartilhados entre todos os funcionários (o cadastro de
+cliente é único por CPF). Ordens antigas ficam com o funcionário que as abriu.
 
 #### Pontos de atenção encontrados nesta etapa
 
@@ -213,8 +223,12 @@ ligada, a ordem de um cliente passa a impedir que ele seja apagado (409).
   o CPF era obrigatório na tela; agora, sem placa, a API recusa e a tela mostra o aviso.
 - **Tempo médio do painel** continua "A calcular": o banco ainda não guarda a
   data de conclusão. Quando existir (`concluida_em`), calcular no `GET /painel`.
-- **Apagar ordem remove do banco** (botão APAGAR da tela). O ideal em produção é
-  marcar como cancelada em vez de apagar; fica como melhoria.
+- **Ordens não são mais apagadas:** o botão CANCELAR faz `UPDATE` do status para "Cancelada" e o
+  botão CONCLUIR (só em ordem paga) marca "Concluída" e etapa 4. Na tela de ordens em andamento, o botão CONFIRMAR PAGAMENTO (só em ordem aguardando
+  pagamento; atalho de testes, pergunta a forma) usa `PUT /ordens/:id/pagamento`. Ela
+  mostra só as que não estão concluídas nem canceladas; o histórico do veículo mostra todas.
+  Concluída ou cancelada não muda mais (409). O painel não conta as canceladas.
+  Não existe mais `DELETE /ordens/:id`.
 - **Nomes de tabela:** o `schema.sql` cria `Funcionario` e `Cliente` com inicial
   maiúscula, mas o servidor consulta `funcionario` em minúsculas. Funciona em
   Windows e Mac (MySQL ignora maiúsculas/minúsculas); em **Linux** falha. Se forem
@@ -233,7 +247,7 @@ ligada, a ordem de um cliente passa a impedir que ele seja apagado (409).
 2. **Login com token: FEITO.** O `/login` devolve um token (JWT HS256, validade de
    12 h, configurável) que o front-end guarda na sessão e envia em
    `Authorization: Bearer ...`. **Exigem token:** `/ordens`, `/ordens/:id`,
-   `/ordens/:id/pagamento`, `/painel` e `GET/PUT/DELETE /funcionarios`. O funcionário
+   `/ordens/:id/pagamento`, `/ordens/:id/conclusao`, `/ordens/:id/cancelamento`, `/painel` e `GET/PUT/DELETE /funcionarios`. O funcionário
    que abre a ordem é o do **token** (um `idFuncionario` enviado no corpo é ignorado).
    `PUT` e `DELETE /funcionarios/:id` só valem para o **próprio** cadastro (403 nos demais).
    Se o token vencer, o front-end encerra a sessão e volta ao login.

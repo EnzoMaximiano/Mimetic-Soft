@@ -1,13 +1,8 @@
 //USER: Matheus Lino
 const formulario = document.getElementById("form-cadastro-cliente");
 const camposObrigatorios = [...formulario.querySelectorAll("[required]")];
-const senha = document.getElementById("senha");
-const repetirSenha = document.getElementById("repetir-senha");
-const grupoRepetirSenha = repetirSenha.closest(".grupo-campo");
 
-const { valor, requisitosSenha } = window.MimeticTela;
-// Atualiza a lista de requisitos da senha e confere se todos foram atendidos.
-const senhaAtendeRequisitos = requisitosSenha(senha);
+const { valor } = window.MimeticTela;
 
 
 // Marca o campo como inválido (aviso "Campo obrigatório") quando está vazio.
@@ -24,10 +19,6 @@ function atualizarEstadoObrigatorio(campo, mostrarErro = false) {
 camposObrigatorios.forEach((campo) => {
     campo.addEventListener("input", () => {
         atualizarEstadoObrigatorio(campo, true);
-
-        if (campo === senha || campo === repetirSenha) {
-            grupoRepetirSenha.classList.remove("senhas-diferentes");
-        }
     });
 });
 
@@ -83,21 +74,7 @@ formulario.addEventListener("submit", async (evento) => {
 
     if (!formularioValido) return;
 
-    if (!senhaAtendeRequisitos()) {
-        senha.focus();
-        return;
-    }
-
-    if (senha.value !== repetirSenha.value) {
-        grupoRepetirSenha.classList.add("senhas-diferentes");
-        repetirSenha.focus();
-        return;
-    }
-
-    grupoRepetirSenha.classList.remove("senhas-diferentes");
-
-    // O cliente é gravado no banco pela API. Ele não tem login, então a senha
-    // digitada NÃO é enviada (a tabela Cliente não guarda senha).
+    // O cliente é gravado no banco pela API. Cliente não tem login nem senha.
     try {
         await window.MimeticAPI.cadastrarCliente({
             nome: valor("nome"), cpf: valor("cpf"), dataNascimento: valor("data-nascimento"),

@@ -253,11 +253,16 @@
     return ordemParaTela(await requisicao('/ordens/' + encodeURIComponent(id), 'PUT', campos));
   }
 
-  // Apaga uma ordem (e os serviços dela) do banco.
-  //USER: Vinicius Sanches
+  // Conclui o serviço de uma ordem paga (status "Concluída", etapa 4). Erro 409 = não pode concluir.
   //userC: Vinicius Sanches
-  function apagarOrdem(id) {
-    return requisicao('/ordens/' + encodeURIComponent(id), 'DELETE');
+  async function concluirOrdem(id) {
+    return ordemParaTela(await requisicao('/ordens/' + encodeURIComponent(id) + '/conclusao', 'PUT'));
+  }
+
+  // Cancela uma ordem: ela continua no banco com o status "Cancelada" (nada é apagado).
+  //userC: Vinicius Sanches
+  async function cancelarOrdem(id) {
+    return ordemParaTela(await requisicao('/ordens/' + encodeURIComponent(id) + '/cancelamento', 'PUT'));
   }
 
   // Busca os indicadores do painel de gestão, calculados pelo banco:
@@ -376,7 +381,8 @@
     buscarOrdemAtual,
     pagarOrdem,
     atualizarOrdem,
-    apagarOrdem,
+    concluirOrdem,
+    cancelarOrdem,
     buscarPainel,
 
     // Clientes.
