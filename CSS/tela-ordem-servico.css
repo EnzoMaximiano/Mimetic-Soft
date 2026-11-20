@@ -80,7 +80,7 @@ body { min-height: 100vh; background: var(--cor-fundo); font-family: Arial, Helv
     .acoes { margin-top:20px; }
 }
 
-/* Solicitação */
+/* Nº do chassi */
 .campo select {
     color: #D2D2D2;
 }
@@ -379,10 +379,10 @@ body { min-height: 100vh; background: var(--cor-fundo); font-family: Arial, Helv
     color: #000000 !important;
 }
 
-/* Solicitação do cliente: placeholder claro; opção escolhida em preto. */
-#solicitacao { color:#C7C7C7 !important; }
-#solicitacao.selecao-realizada { color:#000000 !important; }
-#solicitacao option { color:#000000 !important; }
+/* Nº do chassi: placeholder claro; opção escolhida em preto. */
+#chassi { color:#C7C7C7 !important; }
+#chassi.selecao-realizada { color:#000000 !important; }
+#chassi option { color:#000000 !important; }
 
 /* Título da Ordem de Serviço centralizado sobre o container do formulário. */
 @media (min-width: 821px) {

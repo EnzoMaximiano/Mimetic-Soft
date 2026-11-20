@@ -85,7 +85,7 @@
     y-=9;
     sec('VEÍCULO E SOLICITAÇÃO');
     zebra=0;
-    row('Veículo:',d.veiculo); row('Ano do veículo:',d.anoCarro); row('Placa:',d.placa); row('Nº Chassi:',d.chassi||d.solicitacao);
+    row('Veículo:',d.veiculo); row('Ano do veículo:',d.anoCarro); row('Placa:',d.placa); row('Nº Chassi:',d.chassi);
     const itens=Array.isArray(d.servicos)?d.servicos:(d.servicos?[{nome:String(d.servicos),preco:d.orcamento||'0,00'}]:[]);
     const alturaServicos=Math.max(46,itens.length*18+30);
     fill(52,y-alturaServicos+17,491,alturaServicos,'0.975 0.975 0.975');
@@ -136,11 +136,11 @@
     const o = ordemSalva && typeof ordemSalva === 'object' ? ordemSalva : null;
     const dados=o ? {
       nome:o.cliente||'', cpf:o.cpf||'', telefone:o.telefone||'', email:o.email||'',
-      veiculo:o.veiculo||'', placa:String(o.placa||'').toUpperCase(), chassi:o.chassi||o.solicitacao||'', solicitacao:o.solicitacao||'', anoCarro:o.anoCarro||o.peca||'',
+      veiculo:o.veiculo||'', placa:String(o.placa||'').toUpperCase(), chassi:o.chassi||'', anoCarro:o.anoCarro||o.peca||'',
       servicos:o.servicos||[], previsao:dataBR(o.previsao||o.conclusao||''), orcamento:o.orcamento||'0,00', emissao:hojeBR()
     } : {
       nome:get('nome'),cpf:get('cpf'),telefone:get('telefone'),email:get('email'),
-      veiculo:get('modelo'),placa:get('placa').toUpperCase(),chassi:get('solicitacao'),solicitacao:get('solicitacao'),anoCarro:get('ano-carro'),
+      veiculo:get('modelo'),placa:get('placa').toUpperCase(),chassi:get('chassi'),anoCarro:get('ano-carro'),
       servicos:(window.MimeticServicos?.listar?.()||[]),previsao:dataBR(get('previsao-conclusao')),orcamento:get('orcamento')||'0,00',emissao:hojeBR()
     };
     const blob=criarPdf(dados); const url=URL.createObjectURL(blob); const a=document.createElement('a');

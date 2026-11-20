@@ -39,7 +39,7 @@ const MAX_SERVICOS_POR_ORDEM = 50;
 
 // Colunas lidas sempre que uma ordem é buscada (evita repetir a lista).
 const COLUNAS_ORDEM = ` o.id_ordem, o.id_cliente, o.id_funcionario, o.cliente_nome, o.cliente_cpf, o.cliente_telefone, o.cliente_email,
-    o.placa, o.veiculo, o.ano_carro, o.solicitacao, o.previsao_conclusao, o.orcamento, o.servicos,
+    o.placa, o.veiculo, o.ano_carro, o.chassi, o.previsao_conclusao, o.orcamento, o.servicos,
     o.status, o.etapa, o.forma_pagamento, o.criada_em `;
 
 // Separador entre os serviços na coluna de texto "servicos".
@@ -92,7 +92,7 @@ function montarOrdem(linha) {
 
         anoCarro: linha.ano_carro ?? '',
 
-        solicitacao: linha.solicitacao ?? '',
+        chassi: linha.chassi ?? '',
 
         previsao: dataISO(linha.previsao_conclusao),
 
@@ -187,7 +187,7 @@ async function garantirCliente(conexao, { nome, cpf, telefone, email }) {
 // ---------------------------------------------------------
 // CRIAR ORDEM DE SERVIÇO
 // Recebe { cliente:{nome,cpf,telefone,email}, placa, veiculo,
-// anoCarro, solicitacao, previsao, servicos:[{nome,preco}] }.
+// anoCarro, chassi, previsao, servicos:[{nome,preco}] }.
 // O orçamento é SEMPRE calculado aqui, somando o preço dos serviços.
 // O cliente é cadastrado na tabela Cliente se o CPF ainda não existir (ver garantirCliente).
 // A ordem e seus itens são gravados juntos (transação): ou salva tudo ou nada.
@@ -206,7 +206,7 @@ router.post('/ordens', async (req, res) => {
             placa,
             veiculo,
             anoCarro,
-            solicitacao,
+            chassi,
             previsao,
             servicos = [],
             formaPagamento
@@ -255,7 +255,7 @@ router.post('/ordens', async (req, res) => {
             ['Placa', placaTexto, 8],
             ['Veículo', veiculo, 100],
             ['Ano do carro', anoCarro, 10],
-            ['Solicitação', solicitacao, 150],
+            ['Nº do chassi', chassi, 50],
         ]);
         if (erroTamanho) {
             return res.status(400).json({ erro: erroTamanho });
@@ -384,7 +384,7 @@ router.post('/ordens', async (req, res) => {
                 placa,
                 veiculo,
                 ano_carro,
-                solicitacao,
+                chassi,
                 previsao_conclusao,
                 orcamento,
                 servicos,
@@ -403,7 +403,7 @@ router.post('/ordens', async (req, res) => {
                 placaTexto,
                 veiculo || null,
                 anoCarro || null,
-                solicitacao || null,
+                chassi || null,
                 previsaoTexto,
                 orcamento,
                 servicosParaTexto(servicosNormalizados),

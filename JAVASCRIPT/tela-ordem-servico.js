@@ -76,14 +76,14 @@ campoPrevisao?.addEventListener('keydown', (evento) => {
 });
 
 // Mantém o placeholder de Solicitação claro e a opção escolhida em preto.
-const solicitacaoCliente = document.getElementById('solicitacao');
+const chassiCliente = document.getElementById('chassi');
 // Deixa o texto da Solicitação em preto quando uma opção foi escolhida (e mais claro no placeholder).
 //USER: Matheus Lino
-function atualizarCorSolicitacao(){
-  solicitacaoCliente?.classList.toggle('selecao-realizada', Boolean(solicitacaoCliente.value));
+function atualizarCorChassi(){
+  chassiCliente?.classList.toggle('selecao-realizada', Boolean(chassiCliente.value));
 }
-solicitacaoCliente?.addEventListener('change', atualizarCorSolicitacao);
-atualizarCorSolicitacao();
+chassiCliente?.addEventListener('change', atualizarCorChassi);
+atualizarCorChassi();
 
 // Previsão de conclusão: valida somente quando existe uma data completa.
 // Assim o navegador não interrompe a digitação do dia/mês/ano.
@@ -166,7 +166,7 @@ formulario?.addEventListener('submit', async (evento) => {
     const ordem = await window.MimeticAPI.criarOrdem({
       cliente: valor('nome'), cpf: valor('cpf'), telefone: valor('telefone'), email: valor('email'),
       placa: valor('placa').toUpperCase(), veiculo: valor('modelo'), anoCarro: valor('ano-carro'),
-      solicitacao: valor('solicitacao'), previsao: valor('previsao-conclusao'),
+      chassi: valor('chassi'), previsao: valor('previsao-conclusao'),
       servicos: servicosSelecionados()
     });
     localStorage.setItem('mimeticOrdemAtual', String(ordem.id));

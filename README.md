@@ -121,7 +121,7 @@ Rotas atuais (todas tratam **apenas funcionários**):
 | DELETE | `/funcionarios/:id` | Remove. **Exige token; só o próprio cadastro** |
 | POST | `/recuperar-senha/solicitar` | `{ email }`: gera e envia o código de 6 dígitos (resposta igual exista o e-mail ou não) |
 | PUT | `/recuperar-senha/redefinir` | `{ email, codigo, novaSenha }`: troca a senha se o código estiver certo e válido |
-| POST | `/ordens` | **Exige token.** Cria a ordem `{ cliente:{nome,cpf,telefone,email}, placa, veiculo, anoCarro, solicitacao, previsao, servicos:[{nome,preco}] }`. O **orçamento é calculado pelo servidor** (soma dos serviços). Ordem e serviços são gravados juntos (transação). |
+| POST | `/ordens` | **Exige token.** Cria a ordem `{ cliente:{nome,cpf,telefone,email}, placa, veiculo, anoCarro, chassi, previsao, servicos:[{nome,preco}] }`. O **orçamento é calculado pelo servidor** (soma dos serviços). Ordem e serviços são gravados juntos (transação). |
 | GET | `/ordens` | Lista as ordens, com os serviços. Filtros opcionais: `?placa=` e `?cpf=` |
 | GET | `/ordens/:id` | Busca uma ordem (usada pela "ordem atual" nas telas de pagamento e acompanhamento) |
 | PUT | `/ordens/:id` | Atualiza `status`, `etapa` (1 a 4) e/ou `previsao`. **Ainda sem tela**; pronta para o fluxo do mecânico |
@@ -221,11 +221,11 @@ cliente é único por CPF). Ordens antigas ficam com o funcionário que as abriu
 
 #### Pontos de atenção encontrados nesta etapa
 
-- **O campo `solicitacao` da tela de OS é, na prática, o número do chassi.** O
-  input tem o placeholder "Digite o nº do chassi" e o PDF imprime esse valor
-  como chassi. Por isso o painel **não** usa esse campo para "serviços mais
-  solicitados" (contaria chassis): usa os **serviços** da coluna
-  `servicos` de `ordem_servico`. Sugestão: renomear a coluna/campo para `chassi`.
+- **Nº do chassi:** o campo que antes se chamava `solicitacao` agora é `chassi` em todo o
+  sistema (coluna `ordem_servico.chassi`, corpo e resposta da API, tela de OS, andamento e
+  PDF). **Banco existente:** rodar `migracao-ordens.sql` (passo 7), ou só
+  `ALTER TABLE ordem_servico CHANGE COLUMN solicitacao chassi VARCHAR(50) NULL;`.
+  O painel não usa esse campo: os "serviços mais solicitados" vêm da coluna `servicos`.
 - **Abrir uma ordem exige funcionário logado**, porque a tabela guarda quem a
   abriu (`id_funcionario NOT NULL`). Com `EXIGIR_LOGIN = false` dá para abrir as
   telas sem login, mas salvar uma ordem mostra "Faça login...".

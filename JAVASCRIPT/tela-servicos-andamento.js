@@ -5,7 +5,7 @@ const STATUS_CONCLUIDA = "Concluída";
 const STATUS_CANCELADA = "Cancelada";
 
 // Desenha a tabela de ordens de serviço em andamento. Cada linha mostra cliente, placa,
-// solicitação, status e conclusão, com os botões da ordem, copiados do <template id="modelo-botoes-ordem"> do HTML.
+// nº do chassi, status e conclusão, com os botões da ordem, copiados do <template id="modelo-botoes-ordem"> do HTML.
 //USER: Matheus Lino
 function exibirOrdens(ordens) {
     listaOrdens.innerHTML = "";
@@ -17,7 +17,7 @@ function exibirOrdens(ordens) {
         const campos = [
             ["cliente", ordem.cliente],
             ["placa", ordem.placa],
-            ["solicitacao", ordem.solicitacao],
+            ["chassi", ordem.chassi],
             ["status", ordem.status]
         ];
 

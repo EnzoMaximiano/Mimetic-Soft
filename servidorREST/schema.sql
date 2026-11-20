@@ -31,8 +31,6 @@ CREATE TABLE Funcionario (
     senha VARCHAR(255) NOT NULL,            -- 255: cabe o hash da senha (ver README, secao 5.3)
     email VARCHAR(255) NOT NULL UNIQUE,
     telefone VARCHAR(20),
-    cargo VARCHAR(50),
-    salario DECIMAL(10,2),
     agencia VARCHAR(20),
     conta VARCHAR(20),
     especialidade VARCHAR(100)
@@ -66,7 +64,7 @@ CREATE TABLE ordem_servico (
   placa VARCHAR(8) NOT NULL,
   veiculo VARCHAR(100),
   ano_carro VARCHAR(10),
-  solicitacao VARCHAR(150),
+  chassi VARCHAR(50),                      -- numero do chassi do veiculo (antes chamado 'solicitacao')
   previsao_conclusao DATE,
   orcamento DECIMAL(10,2) NOT NULL DEFAULT 0,
   servicos TEXT NULL,                     -- servicos da OS, como as opcoes da tela: 'Troca de oleo, Alinhamento'

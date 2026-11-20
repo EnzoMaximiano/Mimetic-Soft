@@ -151,8 +151,7 @@
       placa: ordem.placa,
       veiculo: ordem.veiculo,
       anoCarro: ordem.anoCarro,
-      solicitacao: ordem.solicitacao,
-      chassi: ordem.solicitacao, // o PDF ainda lê este campo (comportamento herdado do protótipo)
+      chassi: ordem.chassi,
       // A API devolve só os nomes dos serviços (o preço de cada um não é guardado); o total fica em "orcamento".
       servicos: (ordem.servicos || []).map(nome => ({ nome, preco: '' })),
       previsao: ordem.previsao || '',
@@ -175,7 +174,7 @@
       placa: dados.placa,
       veiculo: dados.veiculo,
       anoCarro: dados.anoCarro,
-      solicitacao: dados.solicitacao,
+      chassi: dados.chassi,
       previsao: dados.previsao,
       servicos: (dados.servicos || []).map(s => ({ nome: s.nome, preco: brParaNumero(s.preco) })),
     };

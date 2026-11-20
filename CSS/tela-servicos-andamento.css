@@ -310,7 +310,7 @@ body {
 
     .ordem .cliente::before { content: "Cliente:"; }
     .ordem .placa::before { content: "Placa:"; }
-    .ordem .solicitacao::before { content: "Solicitação:"; }
+    .ordem .chassi::before { content: "Nº Chassi:"; }
     .ordem .status::before { content: "Status:"; }
     .ordem .conclusao::before { content: "Conclusão:"; }
 
@@ -561,7 +561,7 @@ body {
 
     .ordem .cliente::before { content: "Cliente:"; }
     .ordem .placa::before { content: "Placa:"; }
-    .ordem .solicitacao::before { content: "Solicitação:"; }
+    .ordem .chassi::before { content: "Nº Chassi:"; }
     .ordem .status::before { content: "Status:"; }
     .ordem .conclusao::before { content: "Conclusão:"; }
 
@@ -642,7 +642,7 @@ body {
 
 /* =========================================================
    TABELA RESPONSIVA NO CELULAR
-   Mantém Cliente, Placa, Solicitação, Status e Conclusão
+   Mantém Cliente, Placa, Nº Chassi, Status e Conclusão
    visíveis como cabeçalho, mas reorganizados verticalmente.
    ========================================================= */
 @media (max-width: 700px) {
@@ -683,7 +683,7 @@ body {
         grid-row: 2;
     }
 
-    .coluna-solicitacao {
+    .coluna-chassi {
         grid-row: 3;
     }
 
