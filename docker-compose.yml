@@ -1,0 +1,84 @@
+# =========================================================
+# MIMETIC SOFT - AMBIENTE VIRTUALIZADO (Docker Compose)
+#
+# Sobe o sistema inteiro com um comando:   docker compose up -d --build
+#
+#   frontend  -> Nginx com as telas          http://localhost:8080
+#   api       -> servidorREST (Node/Express) http://localhost:3000
+#   db        -> MySQL 8 com o schema.sql    localhost:3307
+#
+# As senhas têm valores padrão para desenvolvimento. Para homologação ou
+# produção, crie um arquivo .env nesta pasta (veja .env.docker.example).
+# =========================================================
+name: mimetic-soft
+
+services:
+  db:
+    image: mysql:8.4
+    container_name: mimetic-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root_mimetic}
+      MYSQL_DATABASE: oficina_mecanica
+      MYSQL_USER: ${DB_USER:-mimetic}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-mimetic123}
+      TZ: America/Sao_Paulo
+    ports:
+      - "${DB_PORT_HOST:-3307}:3306"
+    volumes:
+      - mimetic-db-data:/var/lib/mysql
+      # Scripts executados só na PRIMEIRA vez que o banco é criado
+      - ./servidorREST/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ./docker/mysql/02-recuperacao-senha.sql:/docker-entrypoint-initdb.d/02-recuperacao-senha.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-p${DB_ROOT_PASSWORD:-root_mimetic}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    networks:
+      - mimetic-net
+
+  api:
+    build: ./servidorREST
+    image: mimetic-soft/api
+    container_name: mimetic-api
+    restart: unless-stopped
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_USER: ${DB_USER:-mimetic}
+      DB_PASSWORD: ${DB_PASSWORD:-mimetic123}
+      DB_NAME: oficina_mecanica
+      PORT: 3000
+      JWT_SECRET: ${JWT_SECRET:-troque_este_segredo_em_producao_mimetic_soft}
+      NODE_ENV: ${NODE_ENV:-development}
+      TZ: America/Sao_Paulo
+    ports:
+      - "3000:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - mimetic-net
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    image: mimetic-soft/frontend
+    container_name: mimetic-frontend
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    depends_on:
+      - api
+    networks:
+      - mimetic-net
+
+volumes:
+  mimetic-db-data:
+
+networks:
+  mimetic-net:
+    driver: bridge

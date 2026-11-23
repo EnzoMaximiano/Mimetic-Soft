@@ -1,0 +1,20 @@
+# =========================================================
+# MIMETIC SOFT - IMAGEM DO FRONT-END
+# Servidor web Nginx entregando as telas estáticas (HTML, CSS, JS e imagens).
+# =========================================================
+FROM nginx:1.27-alpine
+
+# Configuração do Nginx (abre a tela de login ao acessar http://localhost:8080)
+COPY docker/nginx/default.conf /etc/nginx/conf.d/default.conf
+
+# Arquivos do front-end
+COPY HTML/        /usr/share/nginx/html/HTML/
+COPY CSS/         /usr/share/nginx/html/CSS/
+COPY JAVASCRIPT/  /usr/share/nginx/html/JAVASCRIPT/
+COPY assets/      /usr/share/nginx/html/assets/
+
+EXPOSE 80
+
+# Teste de saúde: o container só fica "healthy" se a tela de login responder
+HEALTHCHECK --interval=30s --timeout=5s --retries=3 \
+  CMD wget -q -O /dev/null http://127.0.0.1/HTML/tela-login.html || exit 1

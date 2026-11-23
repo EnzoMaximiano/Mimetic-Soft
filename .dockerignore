@@ -1,0 +1,8 @@
+.git
+servidorREST
+node_modules
+docker/mysql
+*.md
+.env
+.env.*
+docker-compose*.yml
