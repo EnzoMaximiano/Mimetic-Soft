@@ -1,54 +1,179 @@
-# MIMETIC SOFT - Projeto integrado (front-end + servidorREST)
+# MIMETIC SOFT
 
-Este projeto reúne o front-end (`HTML/`, `CSS/`, `JAVASCRIPT/`, `assets/`) e o
-servidor da API (`servidorREST/`). Nesta versão, **login, cadastro de
-funcionário, clientes, ordens de serviço, pagamento e painel de gestão já
-funcionam de verdade com o MySQL**. O passo a passo para novas telas está no
-[guia da seção 5](#5-como-aplicar-o-resto-da-api).
+**Sistema de gestão para oficina mecânica**: ordens de serviço, clientes, pagamentos,
+acompanhamento do veículo e painel de gestão, com front-end web, API REST e banco
+de dados MySQL. O ambiente completo pode ser executado com **Docker**.
 
-**Organização em grupo:** a linha logo acima de cada função traz o autor
-(`//USER: Nome` ou `//userC: Nome`). Ao criar uma função nova, adicione o seu.
+> **Organização em grupo:** a linha logo acima de cada função traz o autor
+> (`//USER: Nome` ou `//userC: Nome`). Ao criar uma função nova, adicione o seu.
 
 ---
 
-## 1. Como rodar
+## Sumário
 
-**Servidor (API)** - dentro de `servidorREST/`:
+1. [Sobre o projeto](#1-sobre-o-projeto)
+2. [Tecnologias](#2-tecnologias)
+3. [Estrutura do projeto](#3-estrutura-do-projeto)
+4. [Como executar](#4-como-executar)
+5. [Ambiente virtualizado (Docker)](#5-ambiente-virtualizado-docker)
+6. [Histórico de alterações](#6-histórico-de-alterações)
+7. [Funcionário x Cliente](#7-funcionário-x-cliente)
+8. [API REST (servidorREST)](#8-api-rest-servidorrest)
+9. [Guia de desenvolvimento](#9-guia-de-desenvolvimento)
+10. [Testes realizados](#10-testes-realizados)
+
+---
+
+## 1. Sobre o projeto
+
+O MIMETIC SOFT reúne, em um único repositório, o **front-end** (telas do sistema)
+e o **servidor da API** (`servidorREST`). Login, cadastro de funcionário, clientes,
+ordens de serviço, pagamento e painel de gestão **funcionam integrados ao MySQL**.
+
+Principais funcionalidades:
+
+- Login de funcionários com senha protegida por hash e sessão por token (JWT)
+- Cadastro de clientes e de funcionários
+- Abertura de ordens de serviço com orçamento calculado pelo servidor
+- Pagamento por PIX, boleto e cartão
+- Acompanhamento das etapas do serviço e histórico por placa do veículo
+- Painel de gestão com indicadores do mês
+- Geração de PDF da ordem de serviço
+- Recuperação de senha com código de 6 dígitos
+
+---
+
+## 2. Tecnologias
+
+| Camada | Tecnologia |
+|---|---|
+| Front-end | HTML5, CSS3 e JavaScript |
+| Back-end | Node.js e Express |
+| Banco de dados | MySQL 8 |
+| Autenticação | JWT (HS256) e senhas com `scrypt` |
+| Virtualização | Docker, Docker Compose e Nginx |
+
+---
+
+## 3. Estrutura do projeto
+
+```
+Mimetic-Soft/
+├── HTML/                    # Telas do sistema
+├── CSS/                     # Estilos de cada tela
+├── JAVASCRIPT/              # Lógica das telas e cliente da API (api-client.js)
+├── assets/                  # Imagens (logo e fundos)
+├── servidorREST/            # API REST (Node.js + Express)
+│   ├── routes/              # Rotas: funcionários, clientes e ordens
+│   ├── database/            # Conexão com o MySQL
+│   ├── utils/               # Autenticação, senha, validações, recuperação
+│   ├── scripts/             # Scripts de manutenção (migrar-senhas.js)
+│   ├── schema.sql           # Estrutura do banco de dados
+│   └── Dockerfile           # Imagem Docker da API
+├── docker/                  # Configurações do ambiente Docker
+│   ├── nginx/default.conf   # Servidor web do front-end
+│   ├── mysql/               # Scripts extras de criação do banco
+│   └── env.exemplo          # Modelo de variáveis por ambiente
+├── Dockerfile.frontend      # Imagem Docker do front-end
+├── docker-compose.yml       # Sobe front-end, API e banco juntos
+├── DOCKER.md                # Documentação do ambiente virtualizado
+└── README.md
+```
+
+---
+
+## 4. Como executar
+
+### 4.1 Com Docker (recomendado)
+
+Pré-requisito: [Docker Desktop](https://www.docker.com/products/docker-desktop/) instalado e aberto.
+
+```bash
+docker compose up -d --build
+```
+
+| Serviço | Endereço |
+|---|---|
+| Sistema (front-end) | http://localhost:8080 |
+| API | http://localhost:3000 |
+| Banco de dados (MySQL) | `localhost:3307` |
+
+Na primeira execução o banco é criado vazio a partir do `schema.sql`. Cadastre um
+funcionário em **Login → Registre-se** para acessar o sistema.
+
+Comandos úteis:
+
+```bash
+docker compose ps              # status dos containers
+docker compose logs -f api     # log da API
+docker compose down            # para o ambiente (mantém os dados)
+docker compose down -v         # para o ambiente e apaga o banco
+```
+
+> Pare o `npm start` local antes de subir o Docker: os dois usam a porta 3000.
+
+### 4.2 Sem Docker (execução manual)
+
+**Servidor (API)**, dentro de `servidorREST/`:
 
 ```bash
 npm install
-# copie .env.example para .env e preencha o MySQL e o JWT_SECRET (veja o comentário no arquivo)
+# copie .env.example para .env e preencha o MySQL e o JWT_SECRET
 npm start                   # ou: npm run dev  (reinicia ao salvar)
 ```
 
-Abra `http://localhost:3000` - deve responder `{"status":"ok", ...}`.
+Abra `http://localhost:3000`: deve responder `{"status":"ok", ...}`.
 
-**Front-end** - abrir `HTML/tela-login.html` com o Live Server (porta 5501).
+**Front-end:** abrir `HTML/tela-login.html` com o Live Server (porta 5501).
 O endereço da API fica em um único lugar: `JAVASCRIPT/api-client.js`
 (`http://localhost:3000`, ou defina `window.MIMETIC_API_URL` antes do script).
 
-**Banco** - segue conforme arquivo do banco de dados no Google Drive. (exemplo no schema.sql)
+**Banco:** criar com `servidorREST/schema.sql` (MySQL 8). A tabela
+`recuperacao_senha`, usada na recuperação de senha, está em
+`docker/mysql/02-recuperacao-senha.sql`.
 
-> **Banco que já existe?** A tabela `ordem_servico` mudou (ver seção 5.2). Rode
-> **uma vez** `servidorREST/migracao-ordens.sql` no MySQL. Em um banco novo, o
+> **Banco que já existe?** A tabela `ordem_servico` mudou (ver seção 9.2). Rode
+> **uma vez** o script `migracao-ordens.sql` no MySQL. Em um banco novo, o
 > `schema.sql` já vem com as mudanças. Sem isso, salvar uma ordem de serviço
 > falha com "Unknown column 'servicos'" (ou 'cliente_nome'). O script também
-> alarga `Funcionario.senha` para `VARCHAR(255)` (cabe o hash da seção 5.3) e pode
-> ser rodado mais de uma vez. **Requer MySQL 8** (a conversão do JSON antigo usa `JSON_TABLE`, só durante a migração).
+> alarga `Funcionario.senha` para `VARCHAR(255)` (cabe o hash da seção 9.3) e pode
+> ser rodado mais de uma vez. **Requer MySQL 8** (a conversão do JSON antigo usa
+> `JSON_TABLE`, só durante a migração).
 
 ---
 
-## 2. O que foi alterado
+## 5. Ambiente virtualizado (Docker)
+
+O sistema roda em três containers ligados por uma rede interna (`mimetic-net`):
+
+| Container | Imagem base | Porta | Função |
+|---|---|---|---|
+| `mimetic-frontend` | `nginx:1.27-alpine` | 8080 | Entrega as telas do sistema |
+| `mimetic-api` | `node:22-alpine` | 3000 | API REST (servidorREST) |
+| `mimetic-db` | `mysql:8.4` | 3307 | Banco de dados `oficina_mecanica` |
+
+- **Banco automático:** na primeira subida, o MySQL executa o `schema.sql` e os scripts de `docker/mysql/`.
+- **Dados persistentes:** o volume `mimetic-db-data` mantém o banco entre reinícios.
+- **Ordem de inicialização:** a API só inicia quando o banco responde (healthcheck).
+- **Ambientes:** desenvolvimento, testes, homologação e produção usam o mesmo
+  `docker-compose.yml`; muda apenas o arquivo `.env` na raiz (modelo em `docker/env.exemplo`).
+
+O levantamento, as decisões e o detalhamento de cada ambiente estão em
+**[DOCKER.md](DOCKER.md)**.
+
+---
+
+## 6. Histórico de alterações
 
 | Arquivo | Mudança |
 |---|---|
-| `HTML/tela-login.html`, `CSS/tela-login.css`, `JAVASCRIPT/tela-login.js` | **Substituídos** pelo design da `tela-login-mimetic`. Mantive o nome `tela-login.html` para que todos os redirecionamentos do sistema continuem funcionando. Fundo em `assets/fundo-login.png`. |
+| `HTML/tela-login.html`, `CSS/tela-login.css`, `JAVASCRIPT/tela-login.js` | **Substituídos** pelo design da `tela-login-mimetic`. O nome `tela-login.html` foi mantido para que todos os redirecionamentos do sistema continuem funcionando. Fundo em `assets/fundo-login.png`. |
 | `JAVASCRIPT/api-client.js` | **Novo.** Único arquivo que fala com a API + funções de sessão do funcionário. Foi incluído em todas as telas, antes do `app-core.js`. |
 | `JAVASCRIPT/app-core.js` | **Enxuto** (131 linhas): só sessão, nome no cabeçalho, menu "Sair", botão VOLTAR e APAGAR ordem. |
 | `JAVASCRIPT/tela-comum.js` | **Novo.** Funções repetidas entre telas (`window.MimeticTela`): leitura de campos, máscara de placa, aviso "Campo obrigatório", requisitos da senha, `finalizarPagamento`. Carregado depois do `api-client.js`. |
-| `servidorREST/` | **Unificado** ao projeto e corrigido (ver seção 4). Ganhou as rotas de ordens, pagamento e painel. |
+| `servidorREST/` | **Unificado** ao projeto e corrigido (ver seção 8). Ganhou as rotas de ordens, pagamento e painel. |
 | `servidorREST/server.js`, `routes/funcionarios.js`, `routes/ordens.js`, `utils/validacoes.js` | Rotas `/ordens`, `/ordens/:id/pagamento` e `/painel`, com validações novas. |
-| `servidorREST/schema.sql`, `migracao-ordens.sql` | `ordem_servico`: `id_cliente` passou a aceitar NULL e ganhou 4 colunas com os dados do cliente (seção 5.2). |
+| `servidorREST/schema.sql`, `migracao-ordens.sql` | `ordem_servico`: `id_cliente` passou a aceitar NULL e ganhou 4 colunas com os dados do cliente (seção 9.2). |
 | `JAVASCRIPT/api-client.js` | Novas funções de ordens, pagamento e painel + conversão de valores (`150.5` <-> `"150,50"`). Passou a ser carregado **antes** do script de cada tela. |
 | `JAVASCRIPT/app-core.js`, `tela-pagamento.js`, `tela-pagamento-pix.js`, `tela-boleto.js`, `tela-cartao.js` | Deixaram de ler/gravar ordens no `localStorage` e passaram a usar a API. |
 | Demais `JAVASCRIPT/*.js` | Apenas **comentários** explicando cada função. Nenhuma lógica alterada. |
@@ -66,18 +191,18 @@ Comportamentos novos da tela de login:
   mude `EXIGIR_LOGIN` para `false` no topo do `app-core.js`.
 - Os ícones da tela vêm do CDN do Ionicons (precisa de internet), como já era
   na tela original.
-- Mantive a caixa de login **fechada até clicar em "Login" no cabeçalho**, como
-  era no design recebido. Se preferir que abra sozinha, adicione
+- A caixa de login fica **fechada até clicar em "Login" no cabeçalho**, como
+  no design recebido. Para que abra sozinha, adicione
   `wrapper.classList.add('active-popup');` no fim de `tela-login.js`.
 - No design original, `<h2 class="Nome">` não recebe o estilo `.nome` do CSS
-  (maiúscula x minúscula). Deixei como veio para não alterar o visual.
+  (maiúscula x minúscula). Foi mantido assim para não alterar o visual.
 
 ---
 
-## 3. Funcionário x Cliente: o que foi encontrado e corrigido
+## 7. Funcionário x Cliente
 
-Você pediu para verificar se cadastro de funcionário e de cliente estavam
-misturados. Estavam, em três pontos do `app-core.js` original:
+Na revisão do protótipo, os cadastros de funcionário e de cliente estavam
+misturados em três pontos do `app-core.js` original:
 
 1. **Login aceitava cliente.** O login procurava o e-mail/senha na lista de
    funcionários **e** na de clientes, e um cliente entrava no mesmo painel do
@@ -107,7 +232,7 @@ O formulário de cliente **não tem campo de senha** (cliente não faz login).
 
 ---
 
-## 4. servidorREST (unificado e corrigido)
+## 8. API REST (servidorREST)
 
 Rotas atuais (todas tratam **apenas funcionários**):
 
@@ -132,9 +257,9 @@ Rotas atuais (todas tratam **apenas funcionários**):
 
 ---
 
-## 5. Como aplicar o resto da API
+## 9. Guia de desenvolvimento
 
-### 5.1 Padrão a seguir (vale para todas as telas)
+### 9.1 Padrão para novas funcionalidades
 
 1. **Servidor:** criar a rota em `servidorREST/server.js` (ou, quando crescer,
    criar `routes/clientes.js` com `express.Router()` e ligá-lo em `server.js` com `app.use(clientes)`, como já é feito com `routes/funcionarios.js` e `routes/ordens.js`).
@@ -144,7 +269,7 @@ Rotas atuais (todas tratam **apenas funcionários**):
 3. **Tela:** trocar o `read('mimeticXxx')`/`write(...)` do `localStorage` por
    `await api().função(...)`. Os locais estão listados abaixo.
 
-### 5.2 Situação de cada dado
+### 9.2 Situação de cada dado
 
 | Dado | Situação | Onde ficou |
 |---|---|---|
@@ -154,7 +279,7 @@ Rotas atuais (todas tratam **apenas funcionários**):
 | **Painel de gestão** | **Feito (API)**, calculado no banco | `GET /painel`, `tela-painel-gestao.js` |
 | **Forma de pagamento escolhida** `mimeticFormaPagamento` | Continua em `localStorage` de propósito: é só a escolha entre duas telas; vai para o banco quando o pagamento é confirmado | `tela-pagamento.js` |
 | **Clientes** | **Feito (API)**: tabela `Cliente`. O `localStorage` `mimeticClientes` deixou de ser usado | `routes/clientes.js`, `api-client.js`, `tela-cadastro-cliente.js`, `tela-ordem-servico.js` (preenche por CPF), `tela-boleto.js` (e-mail) |
-| **Recuperação de senha** | **Feito (API)** com código de 6 dígitos; o envio por e-mail ainda não está configurado (aparece no console do servidor) | ver 5.3 |
+| **Recuperação de senha** | **Feito (API)** com código de 6 dígitos; o envio por e-mail ainda não está configurado (aparece no console do servidor) | ver 9.3 |
 
 **Dados antigos:** o `localStorage` antigo (`mimeticOrdens`) deixou de ser usado.
 Ordens que só existiam lá não aparecem mais. Para limpar, apague essa chave em
@@ -245,11 +370,11 @@ cliente é único por CPF). Ordens antigas ficam com o funcionário que as abriu
   Concluída ou cancelada não muda mais (409). O painel não conta as canceladas.
   Não existe mais `DELETE /ordens/:id`.
 - **Nomes de tabela:** o `schema.sql` cria `Funcionario` e `Cliente` com inicial
-  maiúscula, mas o servidor consulta `funcionario` em minúsculas. Funciona em
-  Windows e Mac (MySQL ignora maiúsculas/minúsculas); em **Linux** falha. Se forem
-  hospedar em Linux, padronizem os nomes.
+  maiúscula, e as consultas do servidor usam exatamente esses nomes. Isso importa em
+  **Linux** (onde o MySQL diferencia maiúsculas de minúsculas), que é o caso do
+  ambiente Docker. Mantenham esse padrão em novas tabelas e consultas.
 
-### 5.3 Segurança: fazer antes de usar de verdade
+### 9.3 Segurança
 
 1. **Senhas com hash: FEITO.** Ficam no banco como `scrypt$<sal>$<hash>` (168
    caracteres, cabem em `VARCHAR(255)`), com sal aleatório por senha
@@ -268,7 +393,7 @@ cliente é único por CPF). Ordens antigas ficam com o funcionário que as abriu
    Se o token vencer, o front-end encerra a sessão e volta ao login.
    **Configure o `JWT_SECRET`** no `.env` (veja `.env.example`). Sem ele o servidor sobe
    com um segredo temporário e **todo mundo perde o login a cada reinício**.
-   Continuam públicos: `GET /`, `POST /login`, `POST /funcionarios` (item 4) e a recuperação de senha.
+   Continuam públicos: `GET /`, `POST /login`, `POST /funcionarios` (item 4 abaixo) e a recuperação de senha.
 3. **Recuperação de senha com código: FEITO, mas o envio de e-mail NÃO.** A pessoa
    informa o e-mail e recebe um código de 6 dígitos (vale 15 min, uso único,
    bloqueado após 5 tentativas erradas; só o hash dele fica na tabela
@@ -278,7 +403,7 @@ cliente é único por CPF). Ordens antigas ficam com o funcionário que as abriu
    funciona até alguém ligar o envio real (troque o corpo de `enviarCodigoRecuperacao`
    em `utils/recuperacao.js`, por exemplo com nodemailer/SMTP).
 4. **Criar conta na tela de login é público:** qualquer pessoa vira funcionário.
-   O design recebido tem esse botão, então mantive. Recomendo que só um
+   O design recebido tem esse botão, por isso foi mantido. Recomenda-se que só um
    funcionário logado (ou administrador) possa cadastrar outros. A tela
    `tela-cadastro-funcionario.html` já exige login, mas hoje **nenhum botão leva a
    ela**; abre só pela URL. Pode virar o cadastro "oficial" e o popup público sair.
@@ -287,7 +412,7 @@ cliente é único por CPF). Ordens antigas ficam com o funcionário que as abriu
 
 ---
 
-## 6. Como foi testado
+## 10. Testes realizados
 
 - **API (57 chamadas):** criar ordem (válida, sem CPF, sem placa, placa longa, data
   impossível, preço negativo/gigante/texto, 51 serviços, JSON quebrado, funcionário
